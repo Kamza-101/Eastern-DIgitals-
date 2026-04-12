@@ -10,31 +10,67 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+    <style>
+    /* iOS Apple-Style Navbar Settings */
+    .ios-navbar {
+        background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
+        backdrop-filter: blur(15px); /* The famous Apple glass blur effect */
+        -webkit-backdrop-filter: blur(15px); /* For Safari support */
+        border-bottom: 1px solid gainsboro;
+        position: sticky; /* Keeps it locked at the top when scrolling */
+        top: 0;
+        z-index: 1000;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Gradient Brand Name (Matches Default.aspx) */
+    .ios-nav-brand {
+        background: linear-gradient(90deg, royalblue, mediumorchid);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+        font-size: 1.4rem;
+        letter-spacing: -0.5px;
+    }
+
+    /* Refined iOS Nav Links */
+    .ios-nav-link {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: dimgray !important;
+        transition: color 0.3s ease;
+        padding: 0.5rem 1rem !important;
+    }
+
+    /* Hover effect for the links */
+    .ios-nav-link:hover {
+        color: royalblue !important;
+    }
+</style>
 </head>
 <body>
     <form id="form1" runat="server">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="Default.aspx">EasternDigital</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="Default.aspx">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Register.aspx">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Login.aspx">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Services.aspx">Services</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <nav class="navbar navbar-expand-lg ios-navbar py-3">
+    <div class="container">
+        <a class="navbar-brand ios-nav-brand" href="Default.aspx">EasternDigital</a>
+        
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto gap-2">
+                <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
+                <li class="nav-item"><a class="nav-link ios-nav-link" href="Register.aspx">REGISTER</a></li>
+                <li class="nav-item"><a class="nav-link ios-nav-link" href="Login.aspx">LOGIN</a></li>
+                <li class="nav-item"><a class="nav-link ios-nav-link" href="ViewCart.aspx">VIEW CART</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-        <header class="bg-secondary py-4 text-center text-white mb-4">
-            <div class="container">
-                <h1>Bridging success for everyone</h1>
-            </div>
-        </header>
+      
 
         <div class="container">
             <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>

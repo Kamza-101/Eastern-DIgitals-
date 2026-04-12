@@ -18,7 +18,7 @@ namespace Group_9
 
         }
 
-        protected void btnSearch_Click(object sender, EventArgs e)
+        protected void btnViewTutoring_Click(object sender, EventArgs e)
         {
             string searchQuery = txtSearch.Text;
             string selectedCategory = ddlFilterCategory.SelectedValue;
