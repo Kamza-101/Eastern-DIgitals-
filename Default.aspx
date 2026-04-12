@@ -36,6 +36,13 @@
                         <a href="BrowseServices.aspx" class="btn btn-outline-primary btn-lg px-5">Explore services</a>
                     </div>
                 </div>
+C:\Users\nqund\source\repos\Eastern-DIgitals-\git>git --version
+'git' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\nqund\source\repos\Eastern-DIgitals-\git>git --version
+'git' is not recognized as an internal or external command,
+operable program or batch file.
             </div>
         </div>
     </div>
