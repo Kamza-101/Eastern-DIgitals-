@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BrowseServices.aspx" />
+    <Content Include="Checkout.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
@@ -80,6 +81,13 @@
     </Compile>
     <Compile Include="BrowseServices.aspx.designer.cs">
       <DependentUpon>BrowseServices.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Checkout.aspx.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Checkout.aspx.designer.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
