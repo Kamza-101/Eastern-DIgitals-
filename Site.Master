@@ -24,7 +24,7 @@
                         <li class="nav-item"><a class="nav-link" href="Default.aspx">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="Register.aspx">Register</a></li>
                         <li class="nav-item"><a class="nav-link" href="Login.aspx">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Services.aspx">Services</a></li>
+                       
                          <li class="nav-item"><a class="nav-link" href="BrowseServices.aspx">ViewServices</a></li>
                     </ul>
                 </div>

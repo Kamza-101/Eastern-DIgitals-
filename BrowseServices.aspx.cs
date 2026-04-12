@@ -13,9 +13,8 @@ namespace Group_9
         {
             if (!IsPostBack)
             {
-                
+                // Logic to load services from the database can go here in the future
             }
-
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
@@ -32,20 +31,30 @@ namespace Group_9
             {
                 txtSearch.Text = "Searching for: " + selectedCategory;
             }
-
         }
 
         protected void btnViewTutoring_Click(object sender, EventArgs e)
         {
-            // Send the user to a page specifically for tutors
-            Response.Redirect("Providers.aspx?category=Tutoring");
+            // Send the user to the details page specifically for tutors
+            Response.Redirect("ServiceDetails.aspx?category=Tutoring");
         }
 
         protected void btnViewPrinting_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Providers.aspx?category=Printing");
+            // Send the user to the details page specifically for printing
+            Response.Redirect("ServiceDetails.aspx?category=Printing");
         }
 
+        protected void btnViewDesign_Click(object sender, EventArgs e)
+        {
+            // Send the user to the details page specifically for graphic design
+            Response.Redirect("ServiceDetails.aspx?category=Graphic Design");
+        }
 
+        protected void btnViewRepair_Click(object sender, EventArgs e)
+        {
+            // Send the user to the details page specifically for device repair
+            Response.Redirect("ServiceDetails.aspx?category=Device Repair");
+        }
     }
 }
