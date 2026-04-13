@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Bookings.aspx" />
     <Content Include="BrowseServices.aspx" />
     <Content Include="Checkout.aspx" />
     <Content Include="Default.aspx" />
@@ -76,6 +77,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bookings.aspx.cs">
+      <DependentUpon>Bookings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Bookings.aspx.designer.cs">
+      <DependentUpon>Bookings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="BrowseServices.aspx.cs">
       <DependentUpon>BrowseServices.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
