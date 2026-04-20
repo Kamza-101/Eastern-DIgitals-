@@ -126,7 +126,7 @@
 
                     <div class="d-grid gap-3 d-md-flex justify-content-md-center">
                         <a href="Register.aspx" class="btn btn-primary btn-lg px-5">Join as a Member</a>
-                        <a href="Services.aspx" class="btn btn-outline-primary btn-lg px-5">Explore services</a>
+                        <a href="BrowseServices.aspx" class="btn btn-outline-primary btn-lg px-5">Explore services</a>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseServices.aspx.cs" Inherits="Group_9.BrowseServices" %>
+﻿<%@ Page Title="Find a Provider | EasternDigital" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseServices.aspx.cs" Inherits="Group_9.BrowseServices" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
     .service-card {
@@ -91,7 +91,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">From R1/page</span>
-                            <asp:Button ID="btnViewPrinting" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewPrinting" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewPrinting_Click" />
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">Varies</span>
-                            <asp:Button ID="btnViewDesign" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewDesign" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewDesign_Click"/>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">Quote Based</span>
-                            <asp:Button ID="btnViewRepair" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewRepair" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewRepair_Click"/>
                         </div>
                     </div>
                 </div>
