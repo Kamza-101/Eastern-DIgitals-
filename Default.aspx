@@ -124,9 +124,11 @@
                 Our platform empowers local providers by turning informal work into a professional digital portfolio, bridging the gap between talent and opportunity while driving economic growth in our community.
             </p>
 
-            <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-4">
-                <a href="Register.aspx" class="ios-btn-primary">Join as a Member</a>
-                <a href="Services.aspx" class="ios-btn-secondary">Explore Services</a>
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                        <a href="Register.aspx" class="btn btn-primary btn-lg px-5">Join as a Member</a>
+                        <a href="Services.aspx" class="btn btn-outline-primary btn-lg px-5">Explore services</a>
+                    </div>
+                </div>
             </div>
             
         </div>
