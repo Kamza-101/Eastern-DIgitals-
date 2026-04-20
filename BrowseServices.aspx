@@ -40,25 +40,7 @@
             <p class="text-muted fs-5">Browse affordable services provided by local students and professionals.</p>
         </div>
 
-        <div class="search-bar-container shadow-sm">
-            <div class="row g-2">
-                <div class="col-md-5">
-                    <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control form-control-lg" placeholder="Search for a service..."></asp:TextBox>
-                </div>
-                <div class="col-md-4">
-                    <asp:DropDownList ID="ddlFilterCategory" runat="server" CssClass="form-select form-select-lg">
-                        <asp:ListItem Text="All Categories" Value="" />
-                        <asp:ListItem>Tutoring Services</asp:ListItem>
-                        <asp:ListItem>Printing Services</asp:ListItem>
-                        <asp:ListItem>Graphic Design</asp:ListItem>
-                        <asp:ListItem>Device Repair</asp:ListItem>
-                    </asp:DropDownList>
-                </div>
-                <div class="col-md-3 d-grid">
-                    <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary btn-lg fw-bold" OnClick="btnSearch_Click" />
-                </div>
-            </div>
-        </div>
+       
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             
