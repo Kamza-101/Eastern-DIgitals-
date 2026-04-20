@@ -26,8 +26,7 @@
     /* Gradient Brand Name (Matches Default.aspx) */
     .ios-nav-brand {
         background: linear-gradient(90deg, royalblue, mediumorchid);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        
         font-weight: 900;
         font-size: 1.4rem;
         letter-spacing: -0.5px;

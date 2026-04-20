@@ -40,7 +40,8 @@
             <p class="text-muted fs-5">Browse affordable services provided by local students and professionals.</p>
         </div>
 
-       
+      
+
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             
