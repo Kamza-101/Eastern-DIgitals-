@@ -11,43 +11,43 @@ namespace Group_9
 {
 
 
-    public partial class BrowseServices
+    public partial class ManageServices
     {
 
         /// <summary>
-        /// btnViewTutoring control.
+        /// btnAddService control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewTutoring;
+        protected global::System.Web.UI.WebControls.Button btnAddService;
 
         /// <summary>
-        /// btnViewPrinting control.
+        /// btnDelete1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewPrinting;
+        protected global::System.Web.UI.WebControls.Button btnDelete1;
 
         /// <summary>
-        /// btnViewDesign control.
+        /// btnApprove1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewDesign;
+        protected global::System.Web.UI.WebControls.Button btnApprove1;
 
         /// <summary>
-        /// btnViewRepair control.
+        /// btnReject1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewRepair;
+        protected global::System.Web.UI.WebControls.Button btnReject1;
     }
 }

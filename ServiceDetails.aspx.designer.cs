@@ -11,43 +11,34 @@ namespace Group_9
 {
 
 
-    public partial class BrowseServices
+    public partial class ServiceDetails
     {
 
         /// <summary>
-        /// btnViewTutoring control.
+        /// lblCategoryTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewTutoring;
+        protected global::System.Web.UI.WebControls.Label lblCategoryTitle;
 
         /// <summary>
-        /// btnViewPrinting control.
+        /// rptProviders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewPrinting;
+        protected global::System.Web.UI.WebControls.Repeater rptProviders;
 
         /// <summary>
-        /// btnViewDesign control.
+        /// lblNoProviders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewDesign;
-
-        /// <summary>
-        /// btnViewRepair control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewRepair;
+        protected global::System.Web.UI.WebControls.Label lblNoProviders;
     }
 }

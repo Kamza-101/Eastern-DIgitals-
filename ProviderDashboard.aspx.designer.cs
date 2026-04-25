@@ -11,43 +11,43 @@ namespace Group_9
 {
 
 
-    public partial class BrowseServices
+    public partial class ProviderDashboard
     {
 
         /// <summary>
-        /// btnViewTutoring control.
+        /// lblTotalRevenue control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewTutoring;
+        protected global::System.Web.UI.WebControls.Label lblTotalRevenue;
 
         /// <summary>
-        /// btnViewPrinting control.
+        /// lblActiveBookings control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewPrinting;
+        protected global::System.Web.UI.WebControls.Label lblActiveBookings;
 
         /// <summary>
-        /// btnViewDesign control.
+        /// lblCompletedJobs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewDesign;
+        protected global::System.Web.UI.WebControls.Label lblCompletedJobs;
 
         /// <summary>
-        /// btnViewRepair control.
+        /// rptProviderBookings control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewRepair;
+        protected global::System.Web.UI.WebControls.Repeater rptProviderBookings;
     }
 }

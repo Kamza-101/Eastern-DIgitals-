@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseServices.aspx.cs" Inherits="Group_9.BrowseServices" %>
+﻿<%@ Page Title="Find a Provider | EasternDigital" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BrowseServices.aspx.cs" Inherits="Group_9.BrowseServices" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
     .service-card {
@@ -40,25 +40,8 @@
             <p class="text-muted fs-5">Browse affordable services provided by local students and professionals.</p>
         </div>
 
-        <div class="search-bar-container shadow-sm">
-            <div class="row g-2">
-                <div class="col-md-5">
-                    <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control form-control-lg" placeholder="Search for a service..."></asp:TextBox>
-                </div>
-                <div class="col-md-4">
-                    <asp:DropDownList ID="ddlFilterCategory" runat="server" CssClass="form-select form-select-lg">
-                        <asp:ListItem Text="All Categories" Value="" />
-                        <asp:ListItem>Tutoring Services</asp:ListItem>
-                        <asp:ListItem>Printing Services</asp:ListItem>
-                        <asp:ListItem>Graphic Design</asp:ListItem>
-                        <asp:ListItem>Device Repair</asp:ListItem>
-                    </asp:DropDownList>
-                </div>
-                <div class="col-md-3 d-grid">
-                    <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary btn-lg fw-bold" OnClick="btnSearch_Click" />
-                </div>
-            </div>
-        </div>
+      
+
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             
@@ -91,7 +74,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">From R1/page</span>
-                            <asp:Button ID="btnViewPrinting" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewPrinting" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewPrinting_Click" />
                         </div>
                     </div>
                 </div>
@@ -108,7 +91,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">Varies</span>
-                            <asp:Button ID="btnViewDesign" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewDesign" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewDesign_Click"/>
                         </div>
                     </div>
                 </div>
@@ -126,7 +109,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark">Quote Based</span>
-                            <asp:Button ID="btnViewRepair" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" />
+                            <asp:Button ID="btnViewRepair" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewRepair_Click"/>
                         </div>
                     </div>
                 </div>

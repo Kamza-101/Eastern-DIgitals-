@@ -13,16 +13,30 @@ namespace Group_9
         {
             if (!IsPostBack)
             {
-                
+                // Logic to load services
             }
-
         }
 
-        protected void btnSearch_Click(object sender, EventArgs e)
+        // --- ADDED THIS METHOD ---
+       
+        protected void btnViewTutoring_Click(object sender, EventArgs e)
         {
-            string searchQuery = txtSearch.Text;
-            string selectedCategory = ddlFilterCategory.SelectedValue;
+            // ... existing code ...
+        }
 
+        protected void btnViewPrinting_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ServiceDetails.aspx?category=Printing");
+        }
+
+        protected void btnViewDesign_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ServiceDetails.aspx?category=Graphic Design");
+        }
+
+        protected void btnViewRepair_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ServiceDetails.aspx?category=Device Repair");
         }
     }
 }
