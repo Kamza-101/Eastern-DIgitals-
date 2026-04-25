@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AdminRegister.aspx" />
     <Content Include="Bookings.aspx" />
     <Content Include="BrowseServices.aspx" />
     <Content Include="Checkout.aspx" />
@@ -83,6 +84,13 @@
     <Content Include="AdminDashboard.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminRegister.aspx.cs">
+      <DependentUpon>AdminRegister.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminRegister.aspx.designer.cs">
+      <DependentUpon>AdminRegister.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Bookings.aspx.cs">
       <DependentUpon>Bookings.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -20,6 +20,10 @@
         
         /* Table / Activity Section */
         .activity-card { background: var(--ios-card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
+        
+        /* Action Button */
+        .btn-ios { background-color: var(--ios-blue); color: white; padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block; transition: opacity 0.2s; }
+        .btn-ios:hover { opacity: 0.8; color: white; }
     </style>
 </asp:Content>
 
@@ -52,6 +56,14 @@
                     <div class="metric-label">System Health</div>
                 </div>
             </div>
+        </div>
+
+        <div class="activity-card">
+            <h4>System Actions</h4>
+            <p class="text-muted small">Manage administrative access and user permissions.</p>
+            <asp:HyperLink ID="lnkRegisterAdmin" runat="server" NavigateUrl="~/AdminRegister.aspx" CssClass="btn-ios">
+                + Register New Admin
+            </asp:HyperLink>
         </div>
 
         <div class="activity-card">
