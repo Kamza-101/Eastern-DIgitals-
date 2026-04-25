@@ -1,4 +1,5 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Group_9.Login" %>
+﻿<%@ Page Title="Login" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Group_9.Login" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
         .login-card {
@@ -23,9 +24,15 @@
             padding: 10px 30px;
             width: 100%;
             font-weight: bold;
+            border: none;
+        }
+        .btn-custom-primary:hover {
+            background-color: #0b5ed7;
+            color: white;
         }
     </style>
 </asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <div class="card login-card">
@@ -40,7 +47,8 @@
                     <div class="d-flex justify-content-center">
                         <asp:RadioButtonList ID="rblLoginType" runat="server" RepeatDirection="Horizontal" CssClass="mx-auto">
                             <asp:ListItem Value="Seeker" Selected="True">&nbsp;Service Seeker&nbsp;&nbsp;</asp:ListItem>
-                            <asp:ListItem Value="Provider">&nbsp;Service Provider</asp:ListItem>
+                            <asp:ListItem Value="Provider">&nbsp;Service Provider&nbsp;&nbsp;</asp:ListItem>
+                            <asp:ListItem Value="Admin">&nbsp;Admin</asp:ListItem>
                         </asp:RadioButtonList>
                     </div>
                 </div>

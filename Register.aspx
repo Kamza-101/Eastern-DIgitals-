@@ -74,7 +74,7 @@
                             <label class="form-label">University</label>
                             <asp:DropDownList ID="ddlUniversity" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- Select University --" Value="" />
-                                <asp:ListItem>Walter Sisulu University</asp:ListItem>
+                                <asp:ListItem>iyhunivhesithi Walter Sisulu</asp:ListItem>
                                 <asp:ListItem>University Of Fort Hare</asp:ListItem>
                                 <asp:ListItem>Rhodes University</asp:ListItem>
                                 <asp:ListItem>Nelson Mandela University</asp:ListItem>
@@ -85,11 +85,11 @@
                             <label class="form-label">City</label>
                             <asp:DropDownList ID="ddlCity" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- Select City --" Value="" />
-                                <asp:ListItem>Port Elizabeth</asp:ListItem>
+                                <asp:ListItem>Port Elizabeth/Gqeberha</asp:ListItem>
                                 <asp:ListItem>Mthatha</asp:ListItem>
                                 <asp:ListItem>Alice</asp:ListItem>
-                                <asp:ListItem>Butterworth</asp:ListItem>
-                                <asp:ListItem>East London</asp:ListItem>
+                                <asp:ListItem>Butterworth/Gcuwa</asp:ListItem>
+                                <asp:ListItem>KuGompo/East London</asp:ListItem>
                                 <asp:ListItem>Bisho</asp:ListItem>
                                 <asp:ListItem>Grahamstown</asp:ListItem>
                             </asp:DropDownList>
