@@ -25,30 +25,39 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="ios-container">
+   <div class="ios-container">
         
         <h2 class="section-title">My Services</h2>
         <asp:Button ID="btnAddService" runat="server" Text="+ Add New Service" CssClass="btn-ios btn-add" OnClick="btnAddService_Click" />
         
         <div style="margin-top:20px;">
-            <div class="ios-card">
-                <div><strong>Math Tutoring</strong><br /><small>R200 / session</small></div>
-                <asp:Button ID="btnDelete1" runat="server" Text="Delete" CssClass="btn-ios btn-delete" OnClick="btnDelete_Click" />
-            </div>
-            </div>
-
-        <h2 class="section-title">Booking Requests</h2>
-        
-        <div class="ios-card">
-            <div>
-                <strong>John Maputla</strong><br />
-                <small>Math Tutoring | Feb 18, 2026</small>
-            </div>
-            <div>
-                <asp:Button ID="btnApprove1" runat="server" Text="Approve" CssClass="btn-ios btn-approve" OnClick="btnApprove_Click" />
-                <asp:Button ID="btnReject1" runat="server" Text="Reject" CssClass="btn-ios btn-reject" OnClick="btnReject_Click" />
-            </div>
+            <asp:Repeater ID="rptMyServices" runat="server" OnItemCommand="rptMyServices_ItemCommand">
+                <ItemTemplate>
+                    <div class="ios-card">
+                        <div><strong><%# Eval("ServiceName") %></strong><br /><small>R <%# Eval("Price") %></small></div>
+                        <asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="btn-ios btn-delete" 
+                            CommandName="Delete" CommandArgument='<%# Eval("ServiceID") %>' />
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
         </div>
 
+        <h2 class="section-title">Booking Requests</h2>
+        <asp:Repeater ID="rptRequests" runat="server" OnItemCommand="rptRequests_ItemCommand">
+            <ItemTemplate>
+                <div class="ios-card">
+                    <div>
+                        <strong><%# Eval("StudentName") %></strong><br />
+                        <small><%# Eval("ServiceName") %> | <%# Eval("BookingDate", "{0:MMM dd, yyyy}") %></small>
+                    </div>
+                    <div>
+                        <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn-ios btn-approve" 
+                            CommandName="Approve" CommandArgument='<%# Eval("BookingID") %>' />
+                        <asp:Button ID="btnReject" runat="server" Text="Reject" CssClass="btn-ios btn-reject" 
+                            CommandName="Reject" CommandArgument='<%# Eval("BookingID") %>' />
+                    </div>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
     </div>
 </asp:Content>

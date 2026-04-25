@@ -4,49 +4,79 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
-using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Web.UI;
+
 
 namespace Group_9
 {
-    public partial class Reports : Page
-    {
-        protected void Page_Load(object sender, EventArgs e)
+   
+        public partial class Reports : System.Web.UI.Page
         {
-            // Optional: Auto-generate a default report on load
-        }
+            string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
 
-        protected void btnGenerate_Click(object sender, EventArgs e)
-        {
-            BindReportData();
-        }
-
-        private void BindReportData()
-        {
-            // Replace with your actual Connection String from Web.config
-            string connString = ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString;
-
-            using (SqlConnection conn = new SqlConnection(connString))
+            protected void Page_Load(object sender, EventArgs e)
             {
-                // Querying the AdminReporting table
-                string query = "SELECT * FROM AdminReporting WHERE ReportCategory = @Category";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                // Security: Only Admins should access reports
+                if (!IsPostBack)
                 {
-                    cmd.Parameters.AddWithValue("@Category", ddlReportType.SelectedValue);
+                    if (Session["UserRole"]?.ToString() != "Admin")
+                    {
+                        Response.Redirect("Login.aspx");
+                    }
+                }
+            }
 
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
+            protected void btnGenerate_Click(object sender, EventArgs e)
+            {
+                string reportType = ddlReportType.SelectedValue;
+                string query = "";
 
-                    gvReport.DataSource = dt;
-                    gvReport.DataBind();
+                // Determine query based on dropdown selection
+                if (reportType == "Sales")
+                {
+                    // Aggregates revenue and counts per service
+                    query = @"SELECT ServiceName, 
+                                 SUM(Price) as TotalRevenue, 
+                                 COUNT(BookingID) as BookingCount 
+                          FROM Bookings 
+                          WHERE Status = 'Completed' 
+                          GROUP BY ServiceName";
+                }
+                else if (reportType == "Users")
+                {
+                    // Groups users by role
+                    query = "SELECT UserRole, COUNT(*) as TotalCount FROM Users GROUP BY UserRole";
+                }
+
+                GenerateReport(query);
+            }
+
+            private void GenerateReport(string query)
+            {
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+
+                        conn.Open();
+                        da.Fill(dt); // Populate DataTable
+
+                        // Bind to GridView
+                        gvReport.DataSource = dt;
+                        gvReport.DataBind();
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Basic error handling for report generation
+                        Response.Write("<script>alert('Error generating report: " + ex.Message + "');</script>");
+                    }
                 }
             }
         }
-    }
+   
 }

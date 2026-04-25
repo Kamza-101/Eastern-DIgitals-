@@ -32,89 +32,51 @@
     }
 </style>
 </asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="container py-4">
-        
+<div class="container py-4">
         <div class="text-center mb-5">
             <h2 class="display-6 fw-bold text-dark">EasternDigital Marketplace</h2>
-            <p class="text-muted fs-5">Browse affordable services provided by local students and professionals.</p>
+            <p class="text-muted fs-5">Browse affordable services provided by local students.</p>
         </div>
 
-      
-
+        <div class="ios-card p-3 mb-4 d-flex gap-2">
+            <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control ios-input" placeholder="Search services..."></asp:TextBox>
+            <asp:DropDownList ID="ddlCategory" runat="server" CssClass="form-select ios-input">
+                <asp:ListItem Text="All Categories" Value="All" />
+                <asp:ListItem Text="Tutoring Services" Value="Tutoring" />
+                <asp:ListItem Text="Printing Services" Value="Printing" />
+                <asp:ListItem Text="Graphic Design" Value="Graphic Design" />
+            </asp:DropDownList>
+            <asp:Button ID="btnSearch" runat="server" Text="Filter" CssClass="btn btn-primary ios-btn" OnClick="btnSearch_Click" />
+        </div>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            
-            <div class="col">
-                <div class="card service-card">
-                    <span class="badge bg-success category-badge">High Demand</span>
-                    <div class="card-icon-wrapper">
-                        <h1 class="display-4 text-primary mb-0">📚</h1>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Tutoring Services</h5>
-                        <p class="card-text text-muted small">Get help with your modules. Affordable peer-to-peer tutoring in programming, math, and more.</p>
-                        <hr />
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-dark">From R80/hr</span>
-                            <asp:Button ID="btnViewTutoring" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" OnClick="btnViewTutoring_Click" />
+            <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
+                <ItemTemplate>
+                    <div class="col">
+                        <div class="card service-card h-100">
+                            <span class="badge bg-success category-badge"><%# Eval("Tag") %></span>
+                            <div class="card-icon-wrapper">
+                                <h1 class="display-4 mb-0"><%# Eval("Icon") %></h1>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold"><%# Eval("ServiceName") %></h5>
+                                <p class="card-text text-muted small"><%# Eval("Description") %></p>
+                                <hr />
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-dark">R <%# Eval("Price") %></span>
+                                    <asp:Button ID="btnView" runat="server" 
+                                        Text="View Providers" 
+                                        CommandName="View" 
+                                        CommandArgument='<%# Eval("ServiceID") %>' 
+                                        CssClass="btn btn-sm btn-outline-primary" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card service-card">
-                    <div class="card-icon-wrapper">
-                        <h1 class="display-4 text-secondary mb-0">🖨️</h1>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Printing Services</h5>
-                        <p class="card-text text-muted small">Fast and affordable local printing for assignments, posters, and documents.</p>
-                        <hr />
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-dark">From R1/page</span>
-                            <asp:Button ID="btnViewPrinting" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewPrinting_Click" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card service-card">
-                    <div class="card-icon-wrapper">
-                        <h1 class="display-4 text-info mb-0">🎨</h1>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Graphic Design</h5>
-                        <p class="card-text text-muted small">Logos, flyers, and digital portfolios created by talented local student designers.</p>
-                        <hr />
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-dark">Varies</span>
-                            <asp:Button ID="btnViewDesign" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewDesign_Click"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card service-card">
-                    <span class="badge bg-warning text-dark category-badge">Essential</span>
-                    <div class="card-icon-wrapper">
-                        <h1 class="display-4 text-danger mb-0">🔧</h1>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Device Repair</h5>
-                        <p class="card-text text-muted small">Screen replacements, software troubleshooting, and hardware fixes for laptops and phones.</p>
-                        <hr />
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-dark">Quote Based</span>
-                            <asp:Button ID="btnViewRepair" runat="server" Text="View Providers" CssClass="btn btn-sm btn-outline-primary" onClick="btnViewRepair_Click"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+                </ItemTemplate>
+            </asp:Repeater>
         </div>
     </div>
 </asp:Content>

@@ -5,91 +5,82 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+ using System.Configuration;
+
 namespace Group_9
 {
     public partial class ViewCart : System.Web.UI.Page
     {
+        string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                LoadCartData();
+                BindCart();
             }
         }
 
-        private void LoadCartData()
+        private void BindCart()
         {
-            // TODO: Replace this with your actual database call (e.g., SELECT * FROM Cart WHERE UserID = ...)
-            DataTable dtCart = GetDummyCartData();
+            // Only show items for the logged-in User
+            if (Session["UserID"] == null) { Response.Redirect("Login.aspx"); }
 
-            if (dtCart.Rows.Count > 0)
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Show items, hide empty message
-                pnlCartItems.Visible = true;
-                pnlEmptyCart.Visible = false;
-                btnProceedCheckout.Enabled = true;
+                string query = @"SELECT C.CartID, S.ServiceName, S.Price 
+                                 FROM Cart C 
+                                 JOIN Services S ON C.ServiceID = S.ServiceID 
+                                 WHERE C.UserID = @UID";
 
-                // Bind data to the repeater
-                rptCartItems.DataSource = dtCart;
-                rptCartItems.DataBind();
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
 
-                // Calculate Totals
-                lblTotalItems.Text = dtCart.Rows.Count.ToString();
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
 
-                // Example calculation (Assuming price is a string like "R 150.00" for display, 
-                // in reality, you should calculate from decimal column types in your DB)
-                lblTotalPrice.Text = "R 400.00"; // Hardcoded for this dummy example
-            }
-            else
-            {
-                // Hide items, show empty message
-                pnlCartItems.Visible = false;
-                pnlEmptyCart.Visible = true;
-                btnProceedCheckout.Enabled = false;
-                lblTotalItems.Text = "0";
-                lblTotalPrice.Text = "R 0.00";
+                rptCart.DataSource = dt;
+                rptCart.DataBind();
+
+                pnlEmpty.Visible = (dt.Rows.Count == 0);
+                CalculateTotal(dt);
             }
         }
 
-        // Handles the "Remove Item" button click inside the Repeater
-        protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
+        private void CalculateTotal(DataTable dt)
+        {
+            decimal total = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                total += Convert.ToDecimal(row["Price"]);
+            }
+            lblTotal.Text = "R " + total.ToString("F2");
+        }
+
+        protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Remove")
             {
-                string cartIdToRemove = e.CommandArgument.ToString();
+                int cartId = int.Parse(e.CommandArgument.ToString());
 
-                // TODO: Add SQL DELETE logic here using the cartIdToRemove
-
-                lblCartMessage.Text = "Service removed from your cart.";
-
-                // Reload the cart to reflect changes
-                LoadCartData();
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    string sql = "DELETE FROM Cart WHERE CartID = @CID";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@CID", cartId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                BindCart(); // Refresh the list
             }
         }
 
-        // Handles the Proceed to Checkout button
-        protected void btnProceedCheckout_Click(object sender, EventArgs e)
+        protected void btnCheckout_Click(object sender, EventArgs e)
         {
-            // Redirect to the checkout/booking confirmation page
-            Response.Redirect("Checkout.aspx");
-        }
-
-        // --- Helper Method for UI Testing ---
-        private DataTable GetDummyCartData()
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("CartID");
-            dt.Columns.Add("Icon");
-            dt.Columns.Add("ServiceName");
-            dt.Columns.Add("ProviderName");
-            dt.Columns.Add("ServiceCategory");
-            dt.Columns.Add("Price");
-
-            // Adding a few fake items so you can see how the design looks
-            dt.Rows.Add("1", "📚", "Java Programming Tutor", "James Motsamai", "Tutoring", "R 150/hr");
-            dt.Rows.Add("2", "🎨", "Custom Logo Design", "Sarah Jenkins", "Graphic Design", "R 250 flat");
-
-            return dt;
+            // You will create a BookingConfirmation.aspx page next
+            Response.Redirect("BookingConfirmation.aspx");
         }
     }
 }

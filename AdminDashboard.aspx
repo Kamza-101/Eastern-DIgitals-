@@ -30,25 +30,25 @@
         <div class="row g-4">
             <div class="col-md-3">
                 <div class="metric-card">
-                    <div class="metric-value">1,284</div>
+                    <div class="metric-value"><asp:Label ID="lblTotalUsers" runat="server" Text="0"></asp:Label></div>
                     <div class="metric-label">Total Users</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="metric-card">
-                    <div class="metric-value">45</div>
+                    <div class="metric-value"><asp:Label ID="lblActiveServices" runat="server" Text="0"></asp:Label></div>
                     <div class="metric-label">Active Services</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="metric-card">
-                    <div class="metric-value">12</div>
+                    <div class="metric-value"><asp:Label ID="lblPendingBookings" runat="server" Text="0"></asp:Label></div>
                     <div class="metric-label">Pending Bookings</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="metric-card" style="border-bottom: 4px solid var(--ios-green);">
-                    <div class="metric-value">98%</div>
+                    <div class="metric-value"><asp:Label ID="lblSystemHealth" runat="server" Text="100%"></asp:Label></div>
                     <div class="metric-label">System Health</div>
                 </div>
             </div>
@@ -65,16 +65,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>John Maputla</td>
-                        <td>Booked a Math Tutoring session</td>
-                        <td>2 mins ago</td>
-                    </tr>
-                    <tr>
-                        <td>Sizakele Bob</td>
-                        <td>Created a new service</td>
-                        <td>1 hour ago</td>
-                    </tr>
+                    <asp:Repeater ID="rptActivity" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td><%# Eval("UserName") %></td>
+                                <td><%# Eval("ActionDescription") %></td>
+                                <td><%# Eval("LogTime") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </tbody>
             </table>
         </div>

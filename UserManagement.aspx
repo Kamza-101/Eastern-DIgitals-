@@ -23,30 +23,11 @@
         <h1 style="margin-bottom: 25px; font-weight:800;">User Management</h1>
 
         <div class="ios-card">
-            <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="False" CssClass="ios-grid">
-                <Columns>
-                    <asp:BoundField DataField="Username" HeaderText="Username" />
-                    
-                    <asp:TemplateField HeaderText="Role">
-                        <ItemTemplate>
-                            <asp:DropDownList ID="ddlRole" runat="server" CssClass="ios-select">
-                                <asp:ListItem>Student</asp:ListItem>
-                                <asp:ListItem>Service Provider</asp:ListItem>
-                                <asp:ListItem>Admin</asp:ListItem>
-                            </asp:DropDownList>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-
-                    <asp:TemplateField HeaderText="Status">
-                        <ItemTemplate>
-                            <asp:DropDownList ID="ddlStatus" runat="server" CssClass="ios-select">
-                                <asp:ListItem>Active</asp:ListItem>
-                                <asp:ListItem>Suspended</asp:ListItem>
-                            </asp:DropDownList>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
+            <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="False" 
+                CssClass="ios-grid" 
+                DataKeyNames="UserID" 
+                OnRowDataBound="gvUsers_RowDataBound">
+                </asp:GridView>
 
             <asp:Button ID="btnSave" runat="server" Text="Save Changes" CssClass="btn-save" OnClick="btnSave_Click" />
         </div>

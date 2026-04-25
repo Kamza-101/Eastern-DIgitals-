@@ -87,7 +87,7 @@
             <asp:Button ID="btnCompleteOrder" runat="server" Text="Confirm & Place Order" CssClass="btn btn-pay" OnClick="btnCompleteOrder_Click" />
         </asp:Panel>
 
-        <asp:Panel ID="pnlSuccess" runat="server" CssClass="checkout-container text-center" Visible="True">
+        <asp:Panel ID="pnlSuccess" runat="server" CssClass="checkout-container text-center" Visible="false">
             <div class="success-icon mb-3">✓</div>
             <h2 class="fw-bold text-dark mb-3">Booking Confirmed!</h2>
             <p class="text-muted fs-5">Thank you for using EasternDigital. Your service provider will contact you shortly.</p>

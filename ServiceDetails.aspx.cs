@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
 namespace Group_9
@@ -7,94 +9,74 @@ namespace Group_9
 
     public partial class ServiceDetails : System.Web.UI.Page
     {
+        string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                // Grab the category from the URL (e.g., ?category=Tutoring)
-                string category = Request.QueryString["category"];
+                // Retrieve the ServiceID from the URL query string
+                string serviceId = Request.QueryString["ServiceID"];
 
-                if (!string.IsNullOrEmpty(category))
+                if (!string.IsNullOrEmpty(serviceId))
                 {
-                    lblCategoryTitle.Text = $"Available Providers: {category}";
-                    LoadProvidersByCategory(category);
+                    BindProviders(serviceId);
                 }
                 else
                 {
-                    lblCategoryTitle.Text = "All Available Providers";
-                    // Fallback to load everything or show an error
-                    LoadProvidersByCategory("All");
+                    lblNoProviders.Text = "Invalid service selection.";
+                    lblNoProviders.Visible = true;
                 }
             }
         }
 
-        private void LoadProvidersByCategory(string category)
+        private void BindProviders(string serviceId)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("ProviderID");
-            dt.Columns.Add("Initials");
-            dt.Columns.Add("ProviderName");
-            dt.Columns.Add("ServiceDesc");
-            dt.Columns.Add("Location");
-            dt.Columns.Add("Rating");
-            dt.Columns.Add("Price");
-
-            // Filter dummy data based on the requested category
-            switch (category.ToLower())
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                case "tutoring":
-                    dt.Rows.Add("T1", "JM", "James Motsamai", "Java & C# Programming", "Alice", "4.8", "R 150/hr");
-                    dt.Rows.Add("T2", "SJ", "Sarah Jenkins", "Business Mathematics", "Port Elizabeth", "4.9", "R 120/hr");
-                    dt.Rows.Add("T3", "SN", "Sipho Ndlovu", "Information Systems Theory", "East London", "4.5", "R 100/hr");
-                    break;
+                // SQL to join Providers and Services to get details for the specific service selected
+                string query = @"SELECT P.ProviderID, 
+                                        P.FirstName + ' ' + P.Surname AS ProviderName, 
+                                        S.ServiceName AS ServiceDesc, 
+                                        P.Location, 
+                                        4.5 AS Rating, -- Placeholder until you add a Reviews table
+                                        S.Price 
+                                 FROM ServiceProviders P
+                                 JOIN Services S ON P.ProviderID = S.ProviderID 
+                                 WHERE S.ServiceID = @SID";
 
-                case "printing":
-                    dt.Rows.Add("P1", "PH", "PrintHub Campus", "Color & B&W, Binding", "Mthatha", "4.7", "R 1/page");
-                    dt.Rows.Add("P2", "ED", "Express Docs", "Bulk Printing & Scanning", "Butterworth", "4.6", "R 0.80/page");
-                    dt.Rows.Add("P3", "LP", "Lihle's Printers", "Poster & Assignment Printing", "Alice", "4.9", "R 1.20/page");
-                    break;
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@SID", serviceId);
 
-                case "graphic design":
-                    dt.Rows.Add("G1", "CJ", "Creative J", "Custom Logos & Branding", "Grahamstown", "5.0", "R 250 flat");
-                    dt.Rows.Add("G2", "VT", "Visuals by Thabo", "Event Flyers & Posters", "Bisho", "4.8", "R 150/design");
-                    dt.Rows.Add("G3", "DA", "Digital Arts PE", "Digital Portfolio Design", "Port Elizabeth", "4.9", "R 400 flat");
-                    break;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
 
-                case "device repair":
-                    dt.Rows.Add("R1", "TF", "TechFix East London", "Screen Replacements", "East London", "4.8", "From R 500");
-                    dt.Rows.Add("R2", "PM", "PC Medics", "Software Troubleshooting", "Mthatha", "4.7", "From R 200");
-                    dt.Rows.Add("R3", "FG", "FixIt Guys", "Hardware & Battery Fixes", "Alice", "4.6", "From R 350");
-                    break;
+                // Add calculated columns for your UI
+                dt.Columns.Add("Initials");
+                foreach (DataRow row in dt.Rows)
+                {
+                    string name = row["ProviderName"].ToString();
+                    row["Initials"] = name.Substring(0, 1).ToUpper(); // First letter for the avatar
+                }
 
-                default:
-                    // If no valid category is matched
-                    break;
-            }
-
-            if (dt.Rows.Count > 0)
-            {
                 rptProviders.DataSource = dt;
                 rptProviders.DataBind();
-                lblNoProviders.Visible = false;
-            }
-            else
-            {
-                rptProviders.DataSource = null;
-                rptProviders.DataBind();
-                lblNoProviders.Visible = true;
+
+                if (dt.Rows.Count == 0)
+                {
+                    lblNoProviders.Visible = true;
+                }
             }
         }
 
-        // Handles the "Book Service" button click
         protected void rptProviders_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Book")
             {
                 string providerId = e.CommandArgument.ToString();
-
-                // TODO: Add Logic to add this specific provider's service to the cart
-                // For now, redirect to the cart to simulate the flow
-                Response.Redirect("ViewCart.aspx");
+                // Redirect to a booking page, passing the provider ID
+                Response.Redirect("BookService.aspx?ProviderID=" + providerId);
             }
         }
     }

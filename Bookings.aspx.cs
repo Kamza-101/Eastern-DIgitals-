@@ -1,43 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
 namespace Group_9
 {
     public partial class Bookings : System.Web.UI.Page
     {
+        // Connection string read from Web.config
+        string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                // Ensure only logged-in users access this page
+                if (Session["UserID"] == null) Response.Redirect("Login.aspx");
                 LoadBookings();
             }
-
         }
 
         private void LoadBookings()
         {
-            DataTable dtBookings = GetDummyBookingsData();
+            try
+            {
+                // Using SqlConnection to manage the communication channel
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    // Query to get bookings for the specific UserID
+                    string query = @"SELECT BookingID, ServiceName, ProviderName, BookingDate, Status, Price, Icon 
+                                     FROM Bookings 
+                                     WHERE UserID = @UID 
+                                     ORDER BY BookingDate DESC";
 
-            if (dtBookings != null && dtBookings.Rows.Count > 0)
-            {
-                rptBookings.DataSource = dtBookings;
-                rptBookings.DataBind();
-                rptBookings.Visible = true;
-                pnlNoBookings.Visible = false;
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UID", Session["UserID"]); // Prevent SQL Injection
+
+                    conn.Open(); // Open connection
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        rptBookings.DataSource = dt;
+                        rptBookings.DataBind();
+                        rptBookings.Visible = true;
+                        pnlNoBookings.Visible = false;
+                    }
+                    else
+                    {
+                        rptBookings.Visible = false;
+                        pnlNoBookings.Visible = true;
+                    }
+                }
             }
-            else
+            catch (SqlException ex)
             {
-                rptBookings.Visible = false;
-                pnlNoBookings.Visible = true;
+                lblMessage.Text = "Unable to load bookings. Please try again.";
+                // In a production app, log ex.Message to an AuditLogs table
             }
         }
 
-        // Sets the button text and color when the list is loading
+        // Handles button styling dynamically when the Repeater binds data
         protected void rptBookings_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
@@ -49,64 +81,54 @@ namespace Group_9
                 {
                     string status = drv["Status"].ToString();
 
-                    if (status == "Pending")
+                    switch (status)
                     {
-                        btnAction.Text = "Cancel Request";
-                        btnAction.CssClass = "btn btn-outline-danger btn-sm btn-action w-100";
-                    }
-                    else if (status == "Confirmed")
-                    {
-                        btnAction.Text = "Message Provider";
-                        btnAction.CssClass = "btn btn-outline-primary btn-sm btn-action w-100";
-                    }
-                    else if (status == "Completed")
-                    {
-                        btnAction.Text = "Leave Review";
-                        btnAction.CssClass = "btn btn-outline-secondary btn-sm btn-action w-100";
+                        case "Pending":
+                            btnAction.Text = "Cancel Request";
+                            btnAction.CssClass = "btn btn-outline-danger btn-sm btn-action w-100";
+                            break;
+                        case "Confirmed":
+                            btnAction.Text = "Message Provider";
+                            btnAction.CssClass = "btn btn-outline-primary btn-sm btn-action w-100";
+                            break;
+                        case "Completed":
+                            btnAction.Text = "Leave Review";
+                            btnAction.CssClass = "btn btn-outline-secondary btn-sm btn-action w-100";
+                            break;
                     }
                 }
             }
         }
 
-        // Handles the click event for the buttons
+        // Handles button clicks for cancellation or actions
         protected void rptBookings_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "ProcessAction")
             {
-                string bookingId = e.CommandArgument.ToString();
+                int bookingId = Convert.ToInt32(e.CommandArgument);
                 Button btn = (Button)e.CommandSource;
 
                 if (btn.Text == "Cancel Request")
                 {
-                    lblMessage.Text = "Success: Booking #" + bookingId + " has been cancelled.";
-                    lblMessage.CssClass = "fw-bold text-danger d-block mb-3 text-center";
-                }
-                else
-                {
-                    lblMessage.Text = "Action: " + btn.Text + " for Booking #" + bookingId;
-                    lblMessage.CssClass = "fw-bold text-success d-block mb-3 text-center";
+                    UpdateBookingStatus(bookingId, "Cancelled");
                 }
 
-                LoadBookings(); // Refresh UI
+                LoadBookings(); // Refresh list after action
             }
         }
 
-        private DataTable GetDummyBookingsData()
+        private void UpdateBookingStatus(int bookingId, string newStatus)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("BookingID");
-            dt.Columns.Add("Icon");
-            dt.Columns.Add("ServiceName");
-            dt.Columns.Add("ProviderName");
-            dt.Columns.Add("BookingDate");
-            dt.Columns.Add("Status");
-            dt.Columns.Add("Price");
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string sql = "UPDATE Bookings SET Status = @Status WHERE BookingID = @BID";
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@Status", newStatus);
+                cmd.Parameters.AddWithValue("@BID", bookingId);
 
-            dt.Rows.Add("1044", "📚", "Java Tutor", "Sipho Ndlovu", "15 April 2026", "Confirmed", "R 150.00");
-            dt.Rows.Add("1045", "🖨️", "Printing", "Alice Copy Shop", "16 April 2026", "Pending", "R 350.00");
-            dt.Rows.Add("1012", "🔧", "Repair", "TechFix Mthatha", "10 April 2026", "Completed", "R 850.00");
-
-            return dt;
+                conn.Open();
+                cmd.ExecuteNonQuery(); // Execute non-query for updates
+            }
         }
     }
 }

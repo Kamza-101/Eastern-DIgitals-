@@ -11,34 +11,43 @@ namespace Group_9
 {
 
 
-    public partial class ManageServices
+    public partial class ManageProfile
     {
 
         /// <summary>
-        /// btnAddService control.
+        /// txtBio control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddService;
+        protected global::System.Web.UI.WebControls.TextBox txtBio;
 
         /// <summary>
-        /// rptMyServices control.
+        /// txtSkills control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptMyServices;
+        protected global::System.Web.UI.WebControls.TextBox txtSkills;
 
         /// <summary>
-        /// rptRequests control.
+        /// btnSave control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptRequests;
+        protected global::System.Web.UI.WebControls.Button btnSave;
+
+        /// <summary>
+        /// lblStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblStatus;
     }
 }
