@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Data.SqlClient;
- using System.Configuration;
+using System.Web.UI.WebControls;
 
 namespace Group_9
 {
@@ -24,28 +20,48 @@ namespace Group_9
 
         private void BindCart()
         {
-            // Only show items for the logged-in User
-            if (Session["UserID"] == null) { Response.Redirect("Login.aspx"); }
+            // Security Check: Only show items for the logged-in User
+            if (Session["UserID"] == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"SELECT C.CartID, S.ServiceName, S.Price 
-                                 FROM Cart C 
-                                 JOIN Services S ON C.ServiceID = S.ServiceID 
-                                 WHERE C.UserID = @UID";
+                try
+                {
+                    string query = @"SELECT C.CartID, S.ServiceName, S.Price 
+                                     FROM Cart C 
+                                     JOIN Services S ON C.ServiceID = S.ServiceID 
+                                     WHERE C.UserID = @UID";
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
 
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
 
-                rptCart.DataSource = dt;
-                rptCart.DataBind();
+                    conn.Open();
+                    da.Fill(dt);
 
-                pnlEmpty.Visible = (dt.Rows.Count == 0);
-                CalculateTotal(dt);
+                    rptCart.DataSource = dt;
+                    rptCart.DataBind();
+
+                    // If the cart is empty, show the empty panel
+                    pnlEmpty.Visible = (dt.Rows.Count == 0);
+
+                    // Update the total price
+                    CalculateTotal(dt);
+                }
+                catch (SqlException ex)
+                {
+                    Response.Write("<script>alert('Database Error loading cart: " + ex.Message + "');</script>");
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('System Error loading cart: " + ex.Message + "');</script>");
+                }
             }
         }
 
@@ -56,9 +72,10 @@ namespace Group_9
             {
                 total += Convert.ToDecimal(row["Price"]);
             }
-            lblTotal.Text = "R " + total.ToString("F2");
+            lblTotal.Text = "R " + total.ToString("0.00");
         }
 
+        // Handles the click of the "Remove" button
         protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Remove")
@@ -67,20 +84,31 @@ namespace Group_9
 
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
-                    string sql = "DELETE FROM Cart WHERE CartID = @CID";
-                    SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@CID", cartId);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                    try
+                    {
+                        string sql = "DELETE FROM Cart WHERE CartID = @CID";
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@CID", cartId);
+
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Response.Write("<script>alert('Error removing item: " + ex.Message + "');</script>");
+                    }
                 }
-                BindCart(); // Refresh the list
+
+                // Refresh the list so the removed item disappears from the screen
+                BindCart();
             }
         }
 
         protected void btnCheckout_Click(object sender, EventArgs e)
         {
             // You will create a BookingConfirmation.aspx page next
-            Response.Redirect("BookingConfirmation.aspx");
+            Response.Redirect("Checkout.aspx");
         }
     }
 }
+

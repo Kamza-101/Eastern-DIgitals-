@@ -13,122 +13,83 @@ namespace Group_9
 {
     public partial class Bookings : System.Web.UI.Page
     {
-        // Connection string read from Web.config
         string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Security check: Must be logged in to view bookings
+            if (Session["UserID"] == null)
+            {
+                Response.Redirect("Login.aspx");
+            }
+
             if (!IsPostBack)
             {
-                // Ensure only logged-in users access this page
-                if (Session["UserID"] == null) Response.Redirect("Login.aspx");
-                LoadBookings();
+                BindBookings();
             }
         }
 
-        private void LoadBookings()
+        private void BindBookings()
         {
-            try
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Using SqlConnection to manage the communication channel
-                using (SqlConnection conn = new SqlConnection(connStr))
+                try
                 {
-                    // Query to get bookings for the specific UserID
-                    string query = @"SELECT BookingID, ServiceName, ProviderName, BookingDate, Status, Price, Icon 
-                                     FROM Bookings 
-                                     WHERE UserID = @UID 
-                                     ORDER BY BookingDate DESC";
+                    // 1. The massive INNER JOIN to get everything your wireframe needs
+                    string query = @"
+                        SELECT 
+                            b.BookingID, 
+                            b.OrderReference, 
+                            b.BookingDate, 
+                            b.Status, 
+                            b.TotalCost,
+                            s.ServiceName, 
+                            s.Icon,
+                            p.FirstName, 
+                            p.Surname
+                        FROM Bookings b
+                        INNER JOIN Services s ON b.ServiceID = s.ServiceID
+                        INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID
+                        WHERE b.UserID = @UID
+                        ORDER BY b.BookingDate DESC";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@UID", Session["UserID"]); // Prevent SQL Injection
-
-                    conn.Open(); // Open connection
+                    cmd.Parameters.AddWithValue("@UID", userId);
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
+
+                    conn.Open();
                     da.Fill(dt);
 
-                    if (dt.Rows.Count > 0)
+                    // 2. Bind it to your front-end Repeater (assuming it is named rptBookings)
+                    // If you named your repeater something else, change 'rptBookings' to match!
+                    rptBookings.DataSource = dt;
+                    rptBookings.DataBind();
+
+                    // Optional: If there are no bookings, show a message
+                    if (dt.Rows.Count == 0)
                     {
-                        rptBookings.DataSource = dt;
-                        rptBookings.DataBind();
-                        rptBookings.Visible = true;
-                        pnlNoBookings.Visible = false;
-                    }
-                    else
-                    {
-                        rptBookings.Visible = false;
-                        pnlNoBookings.Visible = true;
+                        // Replace 'lblMessage' with whatever ID your error label uses
+                        lblMessage.Text = "You have not made any bookings yet.";
+                        lblMessage.Visible = true;
                     }
                 }
-            }
-            catch (SqlException ex)
-            {
-                lblMessage.Text = "Unable to load bookings. Please try again.";
-                // In a production app, log ex.Message to an AuditLogs table
-            }
-        }
-
-        // Handles button styling dynamically when the Repeater binds data
-        protected void rptBookings_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-            {
-                Button btnAction = (Button)e.Item.FindControl("btnAction");
-                DataRowView drv = (DataRowView)e.Item.DataItem;
-
-                if (btnAction != null && drv != null)
+                catch (SqlException ex)
                 {
-                    string status = drv["Status"].ToString();
-
-                    switch (status)
-                    {
-                        case "Pending":
-                            btnAction.Text = "Cancel Request";
-                            btnAction.CssClass = "btn btn-outline-danger btn-sm btn-action w-100";
-                            break;
-                        case "Confirmed":
-                            btnAction.Text = "Message Provider";
-                            btnAction.CssClass = "btn btn-outline-primary btn-sm btn-action w-100";
-                            break;
-                        case "Completed":
-                            btnAction.Text = "Leave Review";
-                            btnAction.CssClass = "btn btn-outline-secondary btn-sm btn-action w-100";
-                            break;
-                    }
+                    // DEVELOPER TRICK: Temporarily print ex.Message to the screen so we can see the exact SQL crash!
+                    lblMessage.Text = "SQL Error: " + ex.Message;
+                    lblMessage.Visible = true;
                 }
-            }
-        }
-
-        // Handles button clicks for cancellation or actions
-        protected void rptBookings_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "ProcessAction")
-            {
-                int bookingId = Convert.ToInt32(e.CommandArgument);
-                Button btn = (Button)e.CommandSource;
-
-                if (btn.Text == "Cancel Request")
+                catch (Exception ex)
                 {
-                    UpdateBookingStatus(bookingId, "Cancelled");
+                    lblMessage.Text = "System Error: " + ex.Message;
+                    lblMessage.Visible = true;
                 }
-
-                LoadBookings(); // Refresh list after action
-            }
-        }
-
-        private void UpdateBookingStatus(int bookingId, string newStatus)
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string sql = "UPDATE Bookings SET Status = @Status WHERE BookingID = @BID";
-                SqlCommand cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@Status", newStatus);
-                cmd.Parameters.AddWithValue("@BID", bookingId);
-
-                conn.Open();
-                cmd.ExecuteNonQuery(); // Execute non-query for updates
             }
         }
     }
 }
+

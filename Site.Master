@@ -1,7 +1,6 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Group_9.Site" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="Group_9.SiteMaster" %>
 
 <!DOCTYPE html>
-
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
@@ -13,20 +12,21 @@
     <style>
     /* iOS Apple-Style Navbar Settings */
     .ios-navbar {
-        background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
-        backdrop-filter: blur(15px); /* The famous Apple glass blur effect */
-        -webkit-backdrop-filter: blur(15px); /* For Safari support */
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         border-bottom: 1px solid gainsboro;
-        position: sticky; /* Keeps it locked at the top when scrolling */
+        position: sticky;
         top: 0;
         z-index: 1000;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Gradient Brand Name (Matches Default.aspx) */
+    /* Gradient Brand Name */
     .ios-nav-brand {
         background: linear-gradient(90deg, royalblue, mediumorchid);
-        
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         font-weight: 900;
         font-size: 1.4rem;
         letter-spacing: -0.5px;
@@ -40,36 +40,56 @@
         color: dimgray !important;
         transition: color 0.3s ease;
         padding: 0.5rem 1rem !important;
+        text-decoration: none; 
     }
 
-    /* Hover effect for the links */
     .ios-nav-link:hover {
         color: royalblue !important;
     }
-</style>
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
     <nav class="navbar navbar-expand-lg ios-navbar py-3">
-    <div class="container">
-        <a class="navbar-brand ios-nav-brand" href="Default.aspx">EasternDigital</a>
-        
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto gap-2">
-                <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
-                <li class="nav-item"><a class="nav-link ios-nav-link" href="Register.aspx">REGISTER</a></li>
-                <li class="nav-item"><a class="nav-link ios-nav-link" href="Login.aspx">LOGIN</a></li>
-                <li class="nav-item"><a class="nav-link ios-nav-link" href="ViewCart.aspx">VIEW CART</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+        <div class="container">
+            <a class="navbar-brand ios-nav-brand" href="Default.aspx">EasternDigital</a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-2">
+    <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
+    <li class="nav-item"><a class="nav-link ios-nav-link" href="BrowseServices.aspx">BROWSE SERVICES</a></li>
+    
+    <asp:PlaceHolder ID="phGuestNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Register.aspx">REGISTER</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Login.aspx">LOGIN</a></li>
+    </asp:PlaceHolder>
 
-      
+    <asp:PlaceHolder ID="phMemberNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Bookings.aspx">MY BOOKINGS</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ViewCart.aspx">VIEW CART</a></li>
+    </asp:PlaceHolder>
+
+    <asp:PlaceHolder ID="phProviderNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ProviderDashboard.aspx">DASHBOARD</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ManageServices.aspx">MANAGE SERVICES</a></li>
+    </asp:PlaceHolder>
+
+    <asp:PlaceHolder ID="phLogoutNav" runat="server">
+        <li class="nav-item">
+            <asp:LinkButton ID="btnLogout" runat="server" 
+                CssClass="nav-link ios-nav-link text-danger" 
+                OnClick="btnLogout_Click" 
+                CausesValidation="false">LOGOUT</asp:LinkButton>
+        </li>
+    </asp:PlaceHolder>
+</ul>
+            </div>
+        </div>
+    </nav>
 
         <div class="container">
             <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
@@ -83,5 +103,4 @@
     </form>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

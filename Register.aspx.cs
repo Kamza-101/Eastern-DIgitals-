@@ -11,16 +11,14 @@ namespace Group_9
 {
     public partial class Register : System.Web.UI.Page
     {
-        // Define your connection string here as a class-level variable
         string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // This runs when the page first loads. 
-            // You can leave it empty for now.
+            // Only runs the first time the page loads
         }
 
-        // Paste the logic right here, below Page_Load but before the closing braces
+        // Toggles the form fields based on whether they are a Seeker or Provider
         protected void rblUserType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (rblUserType.SelectedValue == "Seeker")
@@ -35,51 +33,105 @@ namespace Group_9
             }
         }
 
-            // 2. YOUR NEW DATABASE LOGIC (Added below the one above)
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            try
+            // 1. Basic Validation
+            if (txtPassword.Text != txtConfirmPassword.Text)
             {
-                using (SqlConnection conn = new SqlConnection(connStr))
+                lblMessage.Text = "Passwords do not match.";
+                lblMessage.CssClass = "text-danger fw-bold";
+                return;
+            }
+
+            // Determine which email box they filled out based on their role selection
+            string role = rblUserType.SelectedValue;
+            string email = (role == "Seeker") ? txtEmail.Text.Trim() : txtProvEmail.Text.Trim();
+            string password = txtPassword.Text.Trim();
+
+            // CRITICAL LOGIC: If they are a provider, their status is forced to 'Pending'
+            string status = (role == "Provider") ? "Pending" : "Active";
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
                 {
                     conn.Open();
 
-                    // Step 1: Insert into Users (Common to both)
-                    string userSql = "INSERT INTO Users (Email, Password, UserType) OUTPUT INSERTED.UserID VALUES (@Email, @Password, @Type)";
-                    SqlCommand cmdUser = new SqlCommand(userSql, conn);
-                    cmdUser.Parameters.AddWithValue("@Email", txtEmail.Text);
-                    cmdUser.Parameters.AddWithValue("@Password", txtPassword.Text);
-                    cmdUser.Parameters.AddWithValue("@Type", rblUserType.SelectedValue);
+                    // 2. Check if the email already exists to prevent crashes
+                    string checkSql = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+                    SqlCommand checkCmd = new SqlCommand(checkSql, conn);
+                    checkCmd.Parameters.AddWithValue("@Email", email);
 
-                    int newUserId = (int)cmdUser.ExecuteScalar();
-
-                    // Step 2: Insert into the specific table based on the Panel visibility
-                    if (rblUserType.SelectedValue == "Seeker")
+                    if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0)
                     {
-                        string seekerSql = "INSERT INTO ServiceSeekers (UserID, FullName, ContactNumber, University, City) VALUES (@UID, @Name, @Contact, @Uni, @City)";
-                        SqlCommand cmdSeeker = new SqlCommand(seekerSql, conn);
-                        cmdSeeker.Parameters.AddWithValue("@UID", newUserId);
-                        cmdSeeker.Parameters.AddWithValue("@Name", txtFullName.Text);
-                        // ... add all other Seeker parameters here ...
-                        cmdSeeker.ExecuteNonQuery();
+                        lblMessage.Text = "This email is already registered.";
+                        lblMessage.CssClass = "text-danger fw-bold";
+                        return;
                     }
-                    else
+
+                    // 3. Insert into Users table
+                    // Using OUTPUT INSERTED.UserID lets us grab the new ID immediately so we can link it
+                    string insertUserSql = "INSERT INTO Users (Email, Password, UserRole, Status) OUTPUT INSERTED.UserID VALUES (@Email, @Password, @Role, @Status)";
+                    SqlCommand cmdUser = new SqlCommand(insertUserSql, conn);
+                    cmdUser.Parameters.AddWithValue("@Email", email);
+                    cmdUser.Parameters.AddWithValue("@Password", password);
+                    cmdUser.Parameters.AddWithValue("@Role", role);
+                    cmdUser.Parameters.AddWithValue("@Status", status);
+
+                    int newUserId = Convert.ToInt32(cmdUser.ExecuteScalar());
+
+                    // 4. Create the Service Provider profile link 
+                    // (This ensures the ProviderDashboard doesn't crash when looking for their ProviderID later)
+                    if (role == "Provider")
                     {
-                        string provSql = "INSERT INTO ServiceProviders (UserID, FirstName, Surname, ContactNumber, IDNumber, Location, ServiceType) VALUES (@UID, @Name, @Surname, @Contact, @ID, @Loc, @Service)";
-                        SqlCommand cmdProv = new SqlCommand(provSql, conn);
+                        string insertProvSql = "INSERT INTO ServiceProviders (UserID) VALUES (@UID)";
+                        SqlCommand cmdProv = new SqlCommand(insertProvSql, conn);
                         cmdProv.Parameters.AddWithValue("@UID", newUserId);
-                        // ... add all other Provider parameters here ...
                         cmdProv.ExecuteNonQuery();
                     }
 
-                    lblMessage.Text = "Registration successful!";
-                    lblMessage.CssClass = "text-success fw-bold";
+                    // 5. Display the correct success message based on their role
+                    if (role == "Provider")
+                    {
+                        lblMessage.Text = "Registration awaiting approval. An Admin will review your account shortly.";
+                        lblMessage.CssClass = "text-warning fw-bold fs-5"; // Yellow/Orange warning text
+                    }
+                    else
+                    {
+                        lblMessage.Text = "Registration successful! You can now log in.";
+                        lblMessage.CssClass = "text-success fw-bold fs-5"; // Green success text
+                    }
+
+                    // Clear the form so they don't accidentally submit twice
+                    btnClear_Click(null, null);
+                }
+                catch (SqlException ex)
+                {
+                    lblMessage.Text = "Database Error: " + ex.Message;
+                    lblMessage.CssClass = "text-danger fw-bold";
                 }
             }
-            catch (Exception ex)
-            {
-                lblMessage.Text = "Error: " + ex.Message;
-            }
+        }
+
+        // Clears all textboxes and dropdowns
+        protected void btnClear_Click(object sender, EventArgs e)
+        {
+            txtFullName.Text = "";
+            txtEmail.Text = "";
+            txtContact.Text = "";
+            ddlUniversity.SelectedIndex = 0;
+            ddlCity.SelectedIndex = 0;
+
+            txtProvName.Text = "";
+            txtProvSurname.Text = "";
+            txtID.Text = "";
+            ddlLocation.SelectedIndex = 0;
+            ddlServiceType.SelectedIndex = 0;
+            txtProvEmail.Text = "";
+            txtProvContact.Text = "";
+
+            txtPassword.Text = "";
+            txtConfirmPassword.Text = "";
         }
     }
 }

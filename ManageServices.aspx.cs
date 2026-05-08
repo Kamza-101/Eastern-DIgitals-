@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace Group_9
@@ -16,69 +12,124 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack) { BindDashboard(); }
-        }
-
-        private void BindDashboard()
-        {
-            // Fetch Services for this Provider
-            using (SqlConnection conn = new SqlConnection(connStr))
+            if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "Provider")
             {
-                // 1. Bind Services
-                string queryServices = "SELECT ServiceID, ServiceName, Price FROM Services WHERE ProviderID = @PID";
-                SqlCommand cmdS = new SqlCommand(queryServices, conn);
-                cmdS.Parameters.AddWithValue("@PID", Session["UserID"]); // Assumes Provider is logged in
+                Response.Redirect("Login.aspx");
+            }
 
-                SqlDataAdapter daS = new SqlDataAdapter(cmdS);
-                DataTable dtS = new DataTable();
-                daS.Fill(dtS);
-                rptMyServices.DataSource = dtS;
-                rptMyServices.DataBind();
-
-                // 2. Bind Bookings
-                string queryReq = "SELECT BookingID, StudentName, ServiceName, BookingDate FROM Bookings WHERE ProviderID = @PID AND Status = 'Pending'";
-                SqlCommand cmdR = new SqlCommand(queryReq, conn);
-                cmdR.Parameters.AddWithValue("@PID", Session["UserID"]);
-
-                SqlDataAdapter daR = new SqlDataAdapter(cmdR);
-                DataTable dtR = new DataTable();
-                daR.Fill(dtR);
-                rptRequests.DataSource = dtR;
-                rptRequests.DataBind();
+            if (!IsPostBack)
+            {
+                LoadProviderServices();
             }
         }
 
-        // Handle Delete Service
+        private void LoadProviderServices()
+        {
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    string sql = @"SELECT s.* FROM Services s
+                                   INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID
+                                   WHERE p.UserID = @UID";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@UID", userId);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+
+                    conn.Open();
+                    da.Fill(dt);
+
+                    rptMyServices.DataSource = dt;
+                    rptMyServices.DataBind();
+                }
+                catch (SqlException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Load Services SQL Error: " + ex.Message);
+                }
+            }
+        }
+
+        // Toggles the form open
+        protected void btnAddService_Click(object sender, EventArgs e)
+        {
+            pnlAddService.Visible = true;
+            btnAddService.Visible = false;
+        }
+
+        // Toggles the form closed
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            pnlAddService.Visible = false;
+            btnAddService.Visible = true;
+            txtServiceName.Text = "";
+            txtPrice.Text = "";
+        }
+
+        // Saves the data to the database
+        protected void btnSaveService_Click(object sender, EventArgs e)
+        {
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // 1. Get the actual ProviderID for this user
+                    SqlCommand getProviderCmd = new SqlCommand("SELECT ProviderID FROM ServiceProviders WHERE UserID = @UID", conn);
+                    getProviderCmd.Parameters.AddWithValue("@UID", userId);
+                    object providerResult = getProviderCmd.ExecuteScalar();
+
+                    if (providerResult != null)
+                    {
+                        int providerId = Convert.ToInt32(providerResult);
+
+                        // 2. Insert the new service
+                        string sql = "INSERT INTO Services (ProviderID, ServiceName, Price, Category, Icon) VALUES (@PID, @Name, @Price, 'General', N'✨')";
+                        SqlCommand cmd = new SqlCommand(sql, conn);
+                        cmd.Parameters.AddWithValue("@PID", providerId);
+                        cmd.Parameters.AddWithValue("@Name", txtServiceName.Text.Trim());
+                        cmd.Parameters.AddWithValue("@Price", Convert.ToDecimal(txtPrice.Text.Trim()));
+
+                        cmd.ExecuteNonQuery();
+
+                        // Close form and refresh list
+                        btnCancel_Click(sender, e);
+                        LoadProviderServices();
+                    }
+                    else
+                    {
+                        lblAddError.Text = "Error: Your account is not registered as a Service Provider in the database.";
+                        lblAddError.Visible = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lblAddError.Text = "Error saving service. Check your price format.";
+                    lblAddError.Visible = true;
+                }
+            }
+        }
+
+        // Deletes a service
         protected void rptMyServices_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Delete")
             {
-                int sId = int.Parse(e.CommandArgument.ToString());
-                ExecuteSql("DELETE FROM Services WHERE ServiceID = @SID", "@SID", sId);
-                BindDashboard();
-            }
-        }
-
-        // Handle Approve/Reject Bookings
-        protected void rptRequests_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            int bId = int.Parse(e.CommandArgument.ToString());
-            string newStatus = (e.CommandName == "Approve") ? "Confirmed" : "Rejected";
-
-            ExecuteSql("UPDATE Bookings SET Status = @Status WHERE BookingID = @BID", "@Status", newStatus, "@BID", bId);
-            BindDashboard();
-        }
-
-        // Helper method to keep code clean
-        private void ExecuteSql(string query, string paramName, object paramValue, string paramName2 = null, object paramValue2 = null)
-        {
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue(paramName, paramValue);
-                if (paramName2 != null) cmd.Parameters.AddWithValue(paramName2, paramValue2);
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    string sql = "DELETE FROM Services WHERE ServiceID = @SID";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@SID", e.CommandArgument);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                LoadProviderServices(); // Refresh screen
             }
         }
     }

@@ -1,107 +1,67 @@
 ﻿<%@ Page Title="Checkout" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Checkout.aspx.cs" Inherits="Group_9.Checkout" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
     <style>
-            .checkout-container {
+        .checkout-container {
             max-width: 800px;
-            margin: 3rem auto;
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 10px 30px gainsboro;
-        }
-        .summary-box {
-            background-color: whitesmoke;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 2rem;
-        }
-        .ios-input {
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
             border-radius: 12px;
+            box-shadow: 0 4px 6px whitesmoke;
             border: 1px solid lightgray;
-            padding: 12px;
-            background-color: whitesmoke;
         }
-        .btn-pay {
-            background-color: royalblue;
+        .section-title {
+            background-color: darkslategray;
             color: white;
-            border-radius: 30px;
-            padding: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .btn-confirm {
+            background-color: dodgerblue;
+            color: white;
             font-weight: bold;
             width: 100%;
-            transition: transform 0.2s;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
         }
-        .btn-pay:hover {
-            transform: scale(1.02);
-            color: white;
-        }
-        .success-icon {
-            font-size: 5rem;
-            color: mediumseagreen;
+        .btn-confirm:hover {
+            background-color: royalblue;
         }
     </style>
 </asp:Content>
 
-
-
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-   <div class="container">
-        
-        <asp:Panel ID="pnlCheckoutForm" runat="server" CssClass="checkout-container">
-            <h2 class="fw-bold mb-4 text-dark">Secure Checkout</h2>
+    <div class="container py-5">
+        <div class="checkout-container">
+            <h2 class="fw-bold mb-4 text-center">Checkout Details</h2>
             
-            <div class="summary-box">
-                <h5 class="fw-bold mb-3">Order Summary</h5>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Total Services:</span>
-                    <asp:Label ID="lblTotalItems" runat="server" CssClass="fw-bold">0</asp:Label>
-                </div>
-                <div class="d-flex justify-content-between border-top pt-2">
-                    <span class="fw-bold fs-5">Amount Due:</span>
-                    <asp:Label ID="lblTotalPrice" runat="server" CssClass="fw-bold fs-5 text-primary">R 0.00</asp:Label>
-                </div>
-            </div>
+            <asp:Label ID="lblMessage" runat="server" CssClass="d-block text-center mb-3 fw-bold"></asp:Label>
 
-            <h5 class="fw-bold mb-3">Billing Details</h5>
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Full Name</label>
-                    <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control ios-input" placeholder="e.g. James Motsamai"></asp:TextBox>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label text-muted small fw-bold">Campus / Location</label>
-                    <asp:TextBox ID="txtLocation" runat="server" CssClass="form-control ios-input" placeholder="e.g. WSU Alice Campus"></asp:TextBox>
-                </div>
-            </div>
+            <h5 class="section-title">Payment Method</h5>
+            <asp:DropDownList ID="ddlPaymentMethod" runat="server" CssClass="form-select">
+                <asp:ListItem Text="Select Payment Method..." Value="" />
+                <asp:ListItem Text="Credit/Debit Card" Value="Card" />
+                <asp:ListItem Text="EFT" Value="EFT" />
+                <asp:ListItem Text="Cash on Campus" Value="Cash" />
+            </asp:DropDownList>
 
-            <h5 class="fw-bold mb-3">Payment Method</h5>
-            <div class="mb-4">
-                <asp:RadioButtonList ID="rblPaymentMethod" runat="server" CssClass="form-check">
-                    <asp:ListItem Value="EFT" Selected="True">&nbsp; Electronic Funds Transfer (EFT)</asp:ListItem>
-                    <asp:ListItem Value="Cash">&nbsp; Cash on Completion</asp:ListItem>
-                    <asp:ListItem Value="Voucher">&nbsp; EasternDigital Voucher</asp:ListItem>
-                </asp:RadioButtonList>
-            </div>
+            <h5 class="section-title">Booking Notes & References</h5>
+            <asp:TextBox ID="txtNotes" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" placeholder="Add any specific instructions for the provider..."></asp:TextBox>
 
-            <asp:Label ID="lblCheckoutError" runat="server" CssClass="text-danger fw-bold d-block mb-3"></asp:Label>
-
-            <asp:Button ID="btnCompleteOrder" runat="server" Text="Confirm & Place Order" CssClass="btn btn-pay" OnClick="btnCompleteOrder_Click" />
-        </asp:Panel>
-
-        <asp:Panel ID="pnlSuccess" runat="server" CssClass="checkout-container text-center" Visible="false">
-            <div class="success-icon mb-3">✓</div>
-            <h2 class="fw-bold text-dark mb-3">Booking Confirmed!</h2>
-            <p class="text-muted fs-5">Thank you for using EasternDigital. Your service provider will contact you shortly.</p>
-            
-            <div class="summary-box d-inline-block text-start mt-3 mb-4 px-5">
-                <p class="mb-1 text-muted">Reference Number:</p>
-                <asp:Label ID="lblReferenceNumber" runat="server" CssClass="fs-4 fw-bold text-dark">#ED-0000</asp:Label>
+            <div class="mt-4">
+                <asp:Button ID="btnConfirmBooking" runat="server" Text="Confirm Booking & Pay" CssClass="btn-confirm" OnClick="btnConfirmBooking_Click" />
             </div>
             
-            <br />
-            <a href="Default.aspx" class="btn btn-outline-dark rounded-pill px-5 py-2 fw-bold">Return to Home</a>
-        </asp:Panel>
-
+            <div class="text-center mt-3">
+                <a href="ViewCart.aspx" class="text-muted">Return to Cart</a>
+            </div>
+        </div>
     </div>
-
 </asp:Content>
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -9,34 +11,77 @@ namespace Group_9
 {
     public partial class Login : System.Web.UI.Page
     {
+        // Connection string defined at the class level
+        string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Clears any previous messages when 
-            if (!IsPostBack)
+            // STATE MANAGEMENT: Auto-redirect if the user is already logged in
+            if (Session["UserID"] != null && Session["UserRole"] != null)
             {
-                lblLoginMessage.Text = "";
+                string existingRole = Session["UserRole"].ToString();
+
+                // Redirect based on the existing session role
+                if (existingRole == "Admin") Response.Redirect("AdminDashboard.aspx");
+                else if (existingRole == "Provider") Response.Redirect("ProviderDashboard.aspx");
+                else Response.Redirect("BrowseServices.aspx");
             }
         }
 
-        // This runs when the user clicks the "Log In" button
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string email = txtEmail.Text;
-            string password = txtPassword.Text;
-            string userType = rblLoginType.SelectedValue; // Captures "Seeker" or "Provider"
+            string email = txtEmail.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            string role = rblLoginType.SelectedValue; // Seeker, Provider, or Admin
 
-            // TODO: Add your database connection and verification logic here.
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    // We verify the credentials AND the role match
+                    string sql = "SELECT UserID FROM Users WHERE Email = @Email AND Password = @Password AND UserRole = @Role AND Status = 'Active'";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
 
-            // Example feedback structure:
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
-                lblLoginMessage.Text = "Please enter both email and password.";
-                lblLoginMessage.CssClass = "fw-bold text-danger";
-            }
-            else
-            {
-                lblLoginMessage.Text = $"Attempting to log in as {userType}...";
-                lblLoginMessage.CssClass = "fw-bold text-success";
+                    // Parameters prevent SQL Injection
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.Parameters.AddWithValue("@Password", password);
+                    cmd.Parameters.AddWithValue("@Role", role);
+
+                    conn.Open();
+
+                    // ExecuteScalar returns the UserID if found, or null if the login fails
+                    object userId = cmd.ExecuteScalar();
+
+                    if (userId != null)
+                    {
+                        // 1. Authentication Successful: Save ID and Role into server memory
+                        Session["UserID"] = userId.ToString();
+                        Session["UserRole"] = role;
+
+                        // 2. Redirect based on role selection
+                        if (role == "Admin") Response.Redirect("AdminDashboard.aspx");
+                        else if (role == "Provider") Response.Redirect("ProviderDashboard.aspx");
+                        else Response.Redirect("BrowseServices.aspx");
+                    }
+                    else
+                    {
+                        // Failure: Show an error message on the screen
+                        lblLoginMessage.Text = "Invalid email, password, or role selection.";
+                        lblLoginMessage.CssClass = "text-danger fw-bold";
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    // ADO.NET Error Handling for Database issues
+                    lblLoginMessage.Text = "Database Error: " + ex.Message;
+                    lblLoginMessage.CssClass = "text-danger fw-bold";
+                }
+                catch (Exception ex)
+                {
+                    // ADO.NET Error Handling for System crashes
+                    lblLoginMessage.Text = "System Error: " + ex.Message;
+                    lblLoginMessage.CssClass = "text-danger fw-bold";
+                }
             }
         }
     }

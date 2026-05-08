@@ -42,12 +42,14 @@
 
         <div class="ios-card p-3 mb-4 d-flex gap-2">
             <asp:TextBox ID="txtSearch" runat="server" CssClass="form-control ios-input" placeholder="Search services..."></asp:TextBox>
-            <asp:DropDownList ID="ddlCategory" runat="server" CssClass="form-select ios-input">
-                <asp:ListItem Text="All Categories" Value="All" />
-                <asp:ListItem Text="Tutoring Services" Value="Tutoring" />
-                <asp:ListItem Text="Printing Services" Value="Printing" />
-                <asp:ListItem Text="Graphic Design" Value="Graphic Design" />
-            </asp:DropDownList>
+           <asp:DropDownList ID="ddlCategory" runat="server" CssClass="form-select ios-input" 
+    AutoPostBack="true" OnSelectedIndexChanged="ddlCategory_SelectedIndexChanged">
+    <asp:ListItem Text="All Categories" Value="All" />
+    <asp:ListItem Text="Tutoring Services" Value="Tutoring" />
+    <asp:ListItem Text="Printing Services" Value="Printing" />
+    <asp:ListItem Text="Graphic Design" Value="Graphic Design" />
+    <asp:ListItem Text="Device Repair" Value="Device Repair Services" />
+</asp:DropDownList>
             <asp:Button ID="btnSearch" runat="server" Text="Filter" CssClass="btn btn-primary ios-btn" OnClick="btnSearch_Click" />
         </div>
 

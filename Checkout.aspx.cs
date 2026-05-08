@@ -12,81 +12,84 @@ namespace Group_9
 {
     public partial class Checkout : System.Web.UI.Page
     {
+        // Connection string defined at the class level
         string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            // Security Check: Ensure the user is logged in before checking out
+            if (Session["UserID"] == null)
             {
-                if (Session["UserID"] == null) Response.Redirect("Login.aspx");
-                LoadOrderSummary();
+                Response.Redirect("Login.aspx");
             }
         }
 
-        private void LoadOrderSummary()
+        protected void btnConfirmBooking_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(connStr))
+            // 1. Validation: Ensure a payment method is selected
+            if (string.IsNullOrEmpty(ddlPaymentMethod.SelectedValue))
             {
-                // Calculate total from cart
-                string query = "SELECT SUM(S.Price) AS TotalPrice, COUNT(C.CartID) AS ItemCount " +
-                               "FROM Cart C JOIN Services S ON C.ServiceID = S.ServiceID " +
-                               "WHERE C.UserID = @UID";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
-
-                conn.Open();
-                SqlDataReader rdr = cmd.ExecuteReader();
-                if (rdr.Read())
-                {
-                    lblTotalItems.Text = rdr["ItemCount"].ToString();
-                    lblTotalPrice.Text = "R " + Convert.ToDecimal(rdr["TotalPrice"]).ToString("F2");
-                }
+                lblMessage.Text = "Please select a payment method.";
+                lblMessage.CssClass = "d-block text-center mb-3 fw-bold text-danger";
+                return;
             }
-        }
 
-        protected void btnCompleteOrder_Click(object sender, EventArgs e)
-        {
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            // Generate a random 6-digit Order Reference (e.g., ED-482910)
+            Random rnd = new Random();
+            string orderRef = "ED-" + rnd.Next(100000, 999999).ToString();
+
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                conn.Open();
-                SqlTransaction trans = conn.BeginTransaction(); // Start Transaction
-
                 try
                 {
-                    // 1. Create the Booking
-                    string insertBooking = @"INSERT INTO Bookings (UserID, TotalAmount, PaymentMethod, Status, BookingDate) 
-                                             OUTPUT INSERTED.BookingID 
-                                             VALUES (@UID, @Total, @Method, 'Pending', GETDATE())";
+                    conn.Open();
 
-                    SqlCommand cmdBook = new SqlCommand(insertBooking, conn, trans);
-                    cmdBook.Parameters.AddWithValue("@UID", Session["UserID"]);
-                    cmdBook.Parameters.AddWithValue("@Total", lblTotalPrice.Text.Replace("R ", ""));
-                    cmdBook.Parameters.AddWithValue("@Method", rblPaymentMethod.SelectedValue);
+                    // 2. MOVE ITEMS FROM CART TO BOOKINGS
+                    // This query copies the user's cart items, grabs the current prices from the 
+                    // Services table, and saves everything permanently into the Bookings table.
+                    string insertBookingsSql = @"
+                        INSERT INTO Bookings (OrderReference, UserID, ServiceID, PaymentMethod, Notes, TotalCost)
+                        SELECT @OrderRef, c.UserID, c.ServiceID, @PayMethod, @Notes, s.Price
+                        FROM Cart c
+                        INNER JOIN Services s ON c.ServiceID = s.ServiceID
+                        WHERE c.UserID = @UID";
 
-                    int newBookingId = (int)cmdBook.ExecuteScalar();
+                    SqlCommand cmdInsert = new SqlCommand(insertBookingsSql, conn);
+                    cmdInsert.Parameters.AddWithValue("@OrderRef", orderRef);
+                    cmdInsert.Parameters.AddWithValue("@PayMethod", ddlPaymentMethod.SelectedValue);
+                    cmdInsert.Parameters.AddWithValue("@Notes", txtNotes.Text.Trim());
+                    cmdInsert.Parameters.AddWithValue("@UID", userId);
 
-                    // 2. Clear the user's cart
-                    string clearCart = "DELETE FROM Cart WHERE UserID = @UID";
-                    SqlCommand cmdClear = new SqlCommand(clearCart, conn, trans);
-                    cmdClear.Parameters.AddWithValue("@UID", Session["UserID"]);
-                    cmdClear.ExecuteNonQuery();
+                    cmdInsert.ExecuteNonQuery();
 
-                    trans.Commit(); // Save everything
+                    // 3. EMPTY THE CART
+                    // Now that the items are safely saved as a Booking, we clear the Cart table
+                    string deleteCartSql = "DELETE FROM Cart WHERE UserID = @UID";
+                    SqlCommand cmdDelete = new SqlCommand(deleteCartSql, conn);
+                    cmdDelete.Parameters.AddWithValue("@UID", userId);
 
-                    // 3. Show Success
-                    pnlCheckoutForm.Visible = false;
-                    pnlSuccess.Visible = true;
-                    lblReferenceNumber.Text = "#ED-" + newBookingId.ToString("D5");
+                    cmdDelete.ExecuteNonQuery();
+
+                    // 4. REDIRECT TO TRACK RECORD
+                    // Send the user to their bookings page to see the newly created order
+                    Response.Redirect("Bookings.aspx");
+                }
+                catch (SqlException ex)
+                {
+                    // ADO.NET Error Handling: Catch database constraints or connection issues
+                    lblMessage.Text = "Database Error: " + ex.Message;
+                    lblMessage.CssClass = "d-block text-center mb-3 fw-bold text-danger";
                 }
                 catch (Exception ex)
                 {
-                    trans.Rollback(); // Undo if anything fails
-                    lblCheckoutError.Text = "Transaction failed: " + ex.Message;
+                    // ADO.NET Error Handling: Catch general C# execution errors
+                    lblMessage.Text = "System Error: " + ex.Message;
+                    lblMessage.CssClass = "d-block text-center mb-3 fw-bold text-danger";
                 }
             }
         }
     }
 }
-        
-    
+
