@@ -33,15 +33,16 @@ namespace Group_9
             }
         }
 
-        protected void btnRegister_Click(object sender, EventArgs e)
+        
+
+
+             protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // 1. Basic Validation
-            if (txtPassword.Text != txtConfirmPassword.Text)
+            if (!Page.IsValid)
             {
-                lblMessage.Text = "Passwords do not match.";
-                lblMessage.CssClass = "text-danger fw-bold";
                 return;
             }
+            
 
             // Determine which email box they filled out based on their role selection
             string role = rblUserType.SelectedValue;
@@ -132,6 +133,8 @@ namespace Group_9
 
             txtPassword.Text = "";
             txtConfirmPassword.Text = "";
+
+            lblMessage.Text = "";
         }
     }
 }

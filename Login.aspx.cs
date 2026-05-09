@@ -30,6 +30,12 @@ namespace Group_9
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
+            // Stop if validation fails
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
             string email = txtEmail.Text.Trim();
             string password = txtPassword.Text.Trim();
             string role = rblLoginType.SelectedValue; // Seeker, Provider, or Admin
