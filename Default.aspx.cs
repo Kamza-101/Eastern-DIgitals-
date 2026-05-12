@@ -11,15 +11,29 @@ namespace Group_9
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-                // STATE MANAGEMENT CHECK: Are they logged in?
-                if (Session["UserID"] != null)
+            {
+                // SECURITY BOUNCER: If an Admin or Provider tries to access this page, bounce them back!
+                if (Session["UserRole"] != null)
                 {
-                    // The user is logged in. Their "Home" is now the Service Catalogue.
-                    Response.Redirect("BrowseServices.aspx");
+                    string role = Session["UserRole"].ToString();
+
+                    if (role == "Admin")
+                    {
+                        Response.Redirect("AdminDashboard.aspx", false);
+                        return; // Stop running the rest of the page code
+                    }
+                    else if (role == "Provider")
+                    {
+                        Response.Redirect("ProviderDashboard.aspx", false);
+                        return; // Stop running the rest of the page code
+                    }
                 }
 
-                // If Session["UserID"] is null, the code ignores the IF statement 
-                // and loads the normal Default.aspx page so guests can see the landing page and log in.
+                if (!IsPostBack)
+                {
+                    // Your existing code to load the services goes here...
+                }
+            }
         }
     }
 }

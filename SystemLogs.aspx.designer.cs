@@ -15,30 +15,30 @@ namespace Group_9
     {
 
         /// <summary>
-        /// txtSearch control.
+        /// lblError control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearch;
+        protected global::System.Web.UI.WebControls.Label lblError;
 
         /// <summary>
-        /// btnSearch control.
+        /// rptLogs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSearch;
+        protected global::System.Web.UI.WebControls.Repeater rptLogs;
 
         /// <summary>
-        /// gvLogs control.
+        /// lblNoData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvLogs;
+        protected global::System.Web.UI.WebControls.Label lblNoData;
     }
 }

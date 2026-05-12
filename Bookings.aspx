@@ -35,7 +35,6 @@
             font-size: 0.85rem;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 8px;
         }
         /* Dynamic Status Colors based on your wireframe */
         .status-pending {
@@ -45,24 +44,6 @@
         .status-approved {
             background-color: #d1e7dd;
             color: #198754; /* Green for Approved */
-        }
-        .btn-view {
-            background-color: #e9ecef;
-            color: #495057;
-            font-weight: 600;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 15px;
-            font-size: 0.85rem;
-            width: 100%;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .btn-view:hover {
-            background-color: #ced4da;
-            color: #212529;
         }
     </style>
 </asp:Content>
@@ -99,8 +80,6 @@
                                 <div class='status-badge <%# Eval("Status").ToString() == "Pending Confirmation" ? "status-pending" : "status-approved" %>'>
                                     <%# Eval("Status") %>
                                 </div>
-                                
-                                <a href="#" class="btn-view">View Details</a>
                             </div>
 
                         </div>

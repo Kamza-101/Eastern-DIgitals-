@@ -17,7 +17,24 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Only load the initial list once when the page first opens
+            // SECURITY BOUNCER: If an Admin or Provider tries to access this page, bounce them back!
+            if (Session["UserRole"] != null)
+            {
+                string role = Session["UserRole"].ToString();
+
+                if (role == "Admin")
+                {
+                    Response.Redirect("AdminDashboard.aspx", false);
+                    return; // Stop running the rest of the page code
+                }
+                else if (role == "Provider")
+                {
+                    Response.Redirect("ProviderDashboard.aspx", false);
+                    return; // Stop running the rest of the page code
+                }
+            }
+
+            // THE FIX: Automatically load the catalogue on the first visit
             if (!IsPostBack)
             {
                 BindServices();
@@ -86,15 +103,16 @@ namespace Group_9
                     rptServices.DataSource = dt;
                     rptServices.DataBind();
                 }
-                catch (SqlException ex)
+                catch (SqlException)
                 {
-                    // ADO.NET Error Handling: Catch database-specific crashes
-                    Response.Write("<script>alert('Database Error: " + ex.Message + "');</script>");
+                    // LECTURE 8 COMPLIANCE: Do not expose raw database errors to the UI.
+                    // We throw this exception up to Global.asax so it can be logged in the AuditLogs securely!
+                    throw;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    // ADO.NET Error Handling: Catch general logic crashes
-                    Response.Write("<script>alert('System Error: " + ex.Message + "');</script>");
+                    // LECTURE 8 COMPLIANCE: Catch general logic crashes and pass them to Global.asax
+                    throw;
                 }
             }
         }
@@ -109,12 +127,12 @@ namespace Group_9
                 // Security Check
                 if (Session["UserID"] == null)
                 {
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Login.aspx", false);
                 }
                 else
                 {
                     // Redirects to ServiceDetails and passes the ID in the URL
-                    Response.Redirect("ServiceDetails.aspx?ServiceID=" + serviceId);
+                    Response.Redirect("ServiceDetails.aspx?ServiceID=" + serviceId, false);
                 }
             }
         }
