@@ -67,7 +67,7 @@ namespace Group_9
                             lblServiceName.Text = reader["ServiceName"].ToString();
                             lblServiceDesc.Text = reader["Description"].ToString();
                             lblPrice.Text = "R " + Convert.ToDecimal(reader["Price"]).ToString("0.00");
-                           
+                            imgService.ImageUrl = reader["Icon"].ToString();
 
                             lblProviderName.Text = reader["FirstName"].ToString() + " " + reader["Surname"].ToString();
                             lblLocation.Text = reader["Location"].ToString();

@@ -4,8 +4,8 @@
     <style>
         .register-card { max-width: 800px; margin: 40px auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #ffffff; }
         .form-header { background: #212529; color: white; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
-        .btn-custom-primary { background-color: #0d6efd; color: white; border-radius: 25px; padding: 10px 30px; border: none; font-weight: bold;}
-        .btn-custom-clear { background-color: #f8f9fa; border: 1px solid #ced4da; border-radius: 25px; padding: 10px 30px; font-weight: bold;}
+        .btn-custom-primary { background-color: #0d6efd; color: white; border-radius: 25px; padding: 10px 30px; }
+        .btn-custom-clear { background-color: #f8f9fa; border: 1px solid #ced4da; border-radius: 25px; padding: 10px 30px; }
     </style>
 </asp:Content>
 
@@ -34,19 +34,19 @@
                 <asp:Panel ID="pnlSeeker" runat="server" Visible="true">
                     <div class="row g-3">
                         <div class="col-md-12">
-                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <label class="form-label">Full Name</label>
                             <asp:TextBox ID="txtFullName" runat="server" CssClass="form-control" placeholder="Enter your full name"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                            <label class="form-label">Email Address</label>
                             <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+                            <label class="form-label">Contact Number</label>
                             <asp:TextBox ID="txtContact" runat="server" CssClass="form-control" MaxLength="10" placeholder="10 digits"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">University <span class="text-danger">*</span></label>
+                            <label class="form-label">University</label>
                             <asp:DropDownList ID="ddlUniversity" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- Select University --" Value="" />
                                 <asp:ListItem>Walter Sisulu University</asp:ListItem>
@@ -56,14 +56,14 @@
                             </asp:DropDownList>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">City <span class="text-danger">*</span></label>
+                            <label class="form-label">City</label>
                             <asp:DropDownList ID="ddlCity" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- Select City --" Value="" />
                                 <asp:ListItem>Gqeberha</asp:ListItem>
                                 <asp:ListItem>Mthatha</asp:ListItem>
                                 <asp:ListItem>Alice</asp:ListItem>
                                 <asp:ListItem>Grahamstown</asp:ListItem>
-                                <asp:ListItem>East London</asp:ListItem>
+                                <asp:ListItem>Mthatha</asp:ListItem>
                             </asp:DropDownList>
                         </div>
                     </div>
@@ -72,30 +72,30 @@
                 <asp:Panel ID="pnlProvider" runat="server" Visible="false">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Name <span class="text-danger">*</span></label>
+                            <label class="form-label">Name</label>
                             <asp:TextBox ID="txtProvName" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Surname <span class="text-danger">*</span></label>
+                            <label class="form-label">Surname</label>
                             <asp:TextBox ID="txtProvSurname" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">ID Number <span class="text-danger">*</span></label>
-                            <asp:TextBox ID="txtID" runat="server" CssClass="form-control" MaxLength="13"></asp:TextBox>
+                            <label class="form-label">ID Number</label>
+                            <asp:TextBox ID="txtID" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Location <span class="text-danger">*</span></label>
+                            <label class="form-label">Location</label>
                             <asp:DropDownList ID="ddlLocation" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- Select Location --" Value="" />
                                 <asp:ListItem>Port Elizabeth</asp:ListItem>
                                 <asp:ListItem>Mthatha</asp:ListItem>
                                 <asp:ListItem>Grahamstown</asp:ListItem>
                                 <asp:ListItem>Bhisho</asp:ListItem>
-                                <asp:ListItem>East London</asp:ListItem>
+                               <asp:ListItem>East London</asp:ListItem>
                             </asp:DropDownList>
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label">Service Type <span class="text-danger">*</span></label>
+                            <label class="form-label">Service Type</label>
                             <asp:DropDownList ID="ddlServiceType" runat="server" CssClass="form-select">
                                 <asp:ListItem Text="-- What service do you provide? --" Value="" />
                                 <asp:ListItem>Tutoring Services</asp:ListItem>
@@ -105,11 +105,11 @@
                             </asp:DropDownList>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <label class="form-label">Email</label>
                             <asp:TextBox ID="txtProvEmail" runat="server" CssClass="form-control" TextMode="Email"></asp:TextBox>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+                            <label class="form-label">Contact Number</label>
                             <asp:TextBox ID="txtProvContact" runat="server" CssClass="form-control" MaxLength="10"></asp:TextBox>
                         </div>
                     </div>
@@ -117,11 +117,11 @@
 
                 <div class="row g-3 mt-2">
                     <div class="col-md-6">
-                        <label class="form-label">Password <span class="text-danger">*</span></label>
+                        <label class="form-label">Password</label>
                         <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <label class="form-label">Confirm Password</label>
                         <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
                 </div>
 
                 <div class="mt-3">
-                    <asp:Label ID="lblMessage" runat="server" CssClass="fw-bold" Visible="false"></asp:Label>
+                    <asp:Label ID="lblMessage" runat="server" CssClass="fw-bold"></asp:Label>
                 </div>
             </div>
         </div>

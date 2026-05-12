@@ -60,42 +60,33 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto gap-2">
-                    
-                    <asp:PlaceHolder ID="phGuestNav" runat="server">
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="BrowseServices.aspx">BROWSE SERVICES</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="Register.aspx">REGISTER</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="Login.aspx">LOGIN</a></li>
-                    </asp:PlaceHolder>
+    <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
+    <li class="nav-item"><a class="nav-link ios-nav-link" href="BrowseServices.aspx">BROWSE SERVICES</a></li>
+    
+    <asp:PlaceHolder ID="phGuestNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Register.aspx">REGISTER</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Login.aspx">LOGIN</a></li>
+    </asp:PlaceHolder>
 
-                    <asp:PlaceHolder ID="phMemberNav" runat="server" Visible="false">
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="Default.aspx">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="BrowseServices.aspx">BROWSE SERVICES</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="Bookings.aspx">MY BOOKINGS</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="ViewCart.aspx">VIEW CART</a></li>
-                    </asp:PlaceHolder>
+    <asp:PlaceHolder ID="phMemberNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="Bookings.aspx">MY BOOKINGS</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ViewCart.aspx">VIEW CART</a></li>
+    </asp:PlaceHolder>
 
-                    <asp:PlaceHolder ID="phProviderNav" runat="server" Visible="false">
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="ProviderDashboard.aspx">DASHBOARD</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="ManageServices.aspx">MANAGE SERVICES</a></li>
-                    </asp:PlaceHolder>
+    <asp:PlaceHolder ID="phProviderNav" runat="server">
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ProviderDashboard.aspx">DASHBOARD</a></li>
+        <li class="nav-item"><a class="nav-link ios-nav-link" href="ManageServices.aspx">MANAGE SERVICES</a></li>
+    </asp:PlaceHolder>
 
-                    <asp:PlaceHolder ID="phAdminNav" runat="server" Visible="false">
-                      <li class="nav-item"><a class="nav-link ios-nav-link" href="AdminDashboard.aspx">DASHBOARD</a></li>
-                      <li class="nav-item"><a class="nav-link ios-nav-link" href="Reports.aspx">SYSTEM REPORTS</a></li>
-                        <li class="nav-item"><a class="nav-link ios-nav-link" href="SystemLogs.aspx">SYSTEM LOGS</a></li>
-                    </asp:PlaceHolder>
-
-                    <asp:PlaceHolder ID="phLogoutNav" runat="server" Visible="false">
-                        <li class="nav-item">
-                            <asp:LinkButton ID="btnLogout" runat="server" 
-                                CssClass="nav-link ios-nav-link text-danger" 
-                                OnClick="btnLogout_Click" 
-                                CausesValidation="false">LOGOUT</asp:LinkButton>
-                        </li>
-                    </asp:PlaceHolder>
-
-                </ul>
+    <asp:PlaceHolder ID="phLogoutNav" runat="server">
+        <li class="nav-item">
+            <asp:LinkButton ID="btnLogout" runat="server" 
+                CssClass="nav-link ios-nav-link text-danger" 
+                OnClick="btnLogout_Click" 
+                CausesValidation="false">LOGOUT</asp:LinkButton>
+        </li>
+    </asp:PlaceHolder>
+</ul>
             </div>
         </div>
     </nav>

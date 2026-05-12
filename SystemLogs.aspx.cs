@@ -16,59 +16,50 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // SECURITY BOUNCER: Only Admins can view the raw system logs
-            if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "Admin")
-            {
-                Response.Redirect("Login.aspx");
-                return;
-            }
-
             if (!IsPostBack)
             {
-                LoadAllLogs();
+                // Security check
+                if (Session["UserRole"]?.ToString() != "Admin") Response.Redirect("Login.aspx");
+
+                BindLogs(""); // Load all logs initially
             }
         }
 
-        private void LoadAllLogs()
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            BindLogs(txtSearch.Text);
+        }
+
+        private void BindLogs(string searchTerm)
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                try
+                // Start with base query
+                string query = "SELECT UserName, ActionDescription, LogTime FROM AuditLogs";
+
+                // Add filter condition if a search term exists
+                if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    // Fetch EVERY log in the system, newest at the top
-                    string sql = "SELECT UserName, ActionDescription, LogTime FROM AuditLogs ORDER BY LogTime DESC";
-
-                    SqlDataAdapter da = new SqlDataAdapter(sql, conn);
-                    DataTable dt = new DataTable();
-
-                    conn.Open();
-                    da.Fill(dt);
-
-                    if (dt.Rows.Count > 0)
-                    {
-                        rptLogs.DataSource = dt;
-                        rptLogs.DataBind();
-
-                        rptLogs.Visible = true;
-                        lblNoData.Visible = false;
-                    }
-                    else
-                    {
-                        rptLogs.Visible = false;
-                        lblNoData.Visible = true;
-                    }
+                    query += " WHERE UserName LIKE @Search OR ActionDescription LIKE @Search";
                 }
-                catch (SqlException ex)
+
+                query += " ORDER BY LogTime DESC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                // Add parameter if searching
+                if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    lblError.Text = "Database Connection Error: " + ex.Message;
-                    lblError.Visible = true;
+                    // The % wildcard allows for partial matches (e.g., 'John' will find 'John Maputla')
+                    cmd.Parameters.AddWithValue("@Search", "%" + searchTerm + "%");
                 }
-                catch (Exception ex)
-                {
-                    // Catch-all for missing tables or syntax errors
-                    lblError.Text = "System Error: " + ex.Message;
-                    lblError.Visible = true;
-                }
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                gvLogs.DataSource = dt;
+                gvLogs.DataBind();
             }
         }
     }

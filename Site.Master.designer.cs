@@ -60,15 +60,6 @@ namespace Group_9
         protected global::System.Web.UI.WebControls.PlaceHolder phProviderNav;
 
         /// <summary>
-        /// phAdminNav control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder phAdminNav;
-
-        /// <summary>
         /// phLogoutNav control.
         /// </summary>
         /// <remarks>

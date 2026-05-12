@@ -20,8 +20,7 @@ namespace Group_9
             // Security check: Must be logged in to view bookings
             if (Session["UserID"] == null)
             {
-                Response.Redirect("Login.aspx", false);
-                return;
+                Response.Redirect("Login.aspx");
             }
 
             if (!IsPostBack)
@@ -65,26 +64,29 @@ namespace Group_9
                     conn.Open();
                     da.Fill(dt);
 
-                    // 2. Bind it to your front-end Repeater
+                    // 2. Bind it to your front-end Repeater (assuming it is named rptBookings)
+                    // If you named your repeater something else, change 'rptBookings' to match!
                     rptBookings.DataSource = dt;
                     rptBookings.DataBind();
 
                     // Optional: If there are no bookings, show a message
                     if (dt.Rows.Count == 0)
                     {
+                        // Replace 'lblMessage' with whatever ID your error label uses
                         lblMessage.Text = "You have not made any bookings yet.";
                         lblMessage.Visible = true;
                     }
                 }
-                catch (SqlException)
+                catch (SqlException ex)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass database crash securely to Global.asax
-                    throw;
+                    // DEVELOPER TRICK: Temporarily print ex.Message to the screen so we can see the exact SQL crash!
+                    lblMessage.Text = "SQL Error: " + ex.Message;
+                    lblMessage.Visible = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass system crash securely to Global.asax
-                    throw;
+                    lblMessage.Text = "System Error: " + ex.Message;
+                    lblMessage.Visible = true;
                 }
             }
         }

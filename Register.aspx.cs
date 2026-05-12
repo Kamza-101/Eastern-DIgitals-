@@ -15,10 +15,10 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Reset message visibility on each postback so old errors disappear
-            lblMessage.Visible = false;
+            // Only runs the first time the page loads
         }
 
+        // Toggles the form fields based on whether they are a Seeker or Provider
         protected void rblUserType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (rblUserType.SelectedValue == "Seeker")
@@ -35,54 +35,20 @@ namespace Group_9
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            string role = rblUserType.SelectedValue;
-            string password = txtPassword.Text.Trim();
-            string email = "";
-
-            // 1. Password Match & Empty Check
-            if (string.IsNullOrEmpty(password) || password != txtConfirmPassword.Text.Trim())
+            // 1. Basic Validation
+            if (txtPassword.Text != txtConfirmPassword.Text)
             {
-                lblMessage.Text = "Passwords do not match or are empty.";
+                lblMessage.Text = "Passwords do not match.";
                 lblMessage.CssClass = "text-danger fw-bold";
-                lblMessage.Visible = true;
                 return;
             }
 
-            // 2. Strict Role-Based Form Validation
-            if (role == "Seeker")
-            {
-                if (string.IsNullOrWhiteSpace(txtFullName.Text) ||
-                    string.IsNullOrWhiteSpace(txtEmail.Text) ||
-                    string.IsNullOrWhiteSpace(txtContact.Text) ||
-                    string.IsNullOrWhiteSpace(ddlUniversity.SelectedValue) ||
-                    string.IsNullOrWhiteSpace(ddlCity.SelectedValue))
-                {
-                    lblMessage.Text = "Please fill in all required Seeker fields.";
-                    lblMessage.CssClass = "text-danger fw-bold";
-                    lblMessage.Visible = true;
-                    return;
-                }
-                email = txtEmail.Text.Trim();
-            }
-            else // Provider
-            {
-                if (string.IsNullOrWhiteSpace(txtProvName.Text) ||
-                    string.IsNullOrWhiteSpace(txtProvSurname.Text) ||
-                    string.IsNullOrWhiteSpace(txtID.Text) ||
-                    string.IsNullOrWhiteSpace(ddlLocation.SelectedValue) ||
-                    string.IsNullOrWhiteSpace(ddlServiceType.SelectedValue) ||
-                    string.IsNullOrWhiteSpace(txtProvEmail.Text) ||
-                    string.IsNullOrWhiteSpace(txtProvContact.Text))
-                {
-                    lblMessage.Text = "Please fill in all required Provider fields.";
-                    lblMessage.CssClass = "text-danger fw-bold";
-                    lblMessage.Visible = true;
-                    return;
-                }
-                email = txtProvEmail.Text.Trim();
-            }
+            // Determine which email box they filled out based on their role selection
+            string role = rblUserType.SelectedValue;
+            string email = (role == "Seeker") ? txtEmail.Text.Trim() : txtProvEmail.Text.Trim();
+            string password = txtPassword.Text.Trim();
 
-            // 3. Database Insertion
+            // CRITICAL LOGIC: If they are a provider, their status is forced to 'Pending'
             string status = (role == "Provider") ? "Pending" : "Active";
 
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -91,7 +57,7 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // Check if the email already exists
+                    // 2. Check if the email already exists to prevent crashes
                     string checkSql = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
                     SqlCommand checkCmd = new SqlCommand(checkSql, conn);
                     checkCmd.Parameters.AddWithValue("@Email", email);
@@ -100,11 +66,11 @@ namespace Group_9
                     {
                         lblMessage.Text = "This email is already registered.";
                         lblMessage.CssClass = "text-danger fw-bold";
-                        lblMessage.Visible = true;
                         return;
                     }
 
-                    // Insert into Users table and grab the new UserID
+                    // 3. Insert into Users table
+                    // Using OUTPUT INSERTED.UserID lets us grab the new ID immediately so we can link it
                     string insertUserSql = "INSERT INTO Users (Email, Password, UserRole, Status) OUTPUT INSERTED.UserID VALUES (@Email, @Password, @Role, @Status)";
                     SqlCommand cmdUser = new SqlCommand(insertUserSql, conn);
                     cmdUser.Parameters.AddWithValue("@Email", email);
@@ -114,33 +80,40 @@ namespace Group_9
 
                     int newUserId = Convert.ToInt32(cmdUser.ExecuteScalar());
 
-                    // Create the specific profile link based on role
+                    // 4. Create the Service Provider profile link 
+                    // (This ensures the ProviderDashboard doesn't crash when looking for their ProviderID later)
                     if (role == "Provider")
                     {
-                        string insertProvSql = "INSERT INTO ServiceProviders (UserID, FirstName, Surname) VALUES (@UID, @FName, @SName)";
+                        string insertProvSql = "INSERT INTO ServiceProviders (UserID) VALUES (@UID)";
                         SqlCommand cmdProv = new SqlCommand(insertProvSql, conn);
                         cmdProv.Parameters.AddWithValue("@UID", newUserId);
-                        cmdProv.Parameters.AddWithValue("@FName", txtProvName.Text.Trim());
-                        cmdProv.Parameters.AddWithValue("@SName", txtProvSurname.Text.Trim());
                         cmdProv.ExecuteNonQuery();
                     }
 
-                    // 4. Success Redirect! (No success message shown)
-                    Response.Redirect("Login.aspx", false);
+                    // 5. Display the correct success message based on their role
+                    if (role == "Provider")
+                    {
+                        lblMessage.Text = "Registration awaiting approval. An Admin will review your account shortly.";
+                        lblMessage.CssClass = "text-warning fw-bold fs-5"; // Yellow/Orange warning text
+                    }
+                    else
+                    {
+                        lblMessage.Text = "Registration successful! You can now log in.";
+                        lblMessage.CssClass = "text-success fw-bold fs-5"; // Green success text
+                    }
+
+                    // Clear the form so they don't accidentally submit twice
+                    btnClear_Click(null, null);
                 }
-                catch (SqlException)
+                catch (SqlException ex)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass database crash securely to Global.asax
-                    throw;
-                }
-                catch (Exception)
-                {
-                    // LECTURE 8 COMPLIANCE: Pass system crash securely to Global.asax
-                    throw;
+                    lblMessage.Text = "Database Error: " + ex.Message;
+                    lblMessage.CssClass = "text-danger fw-bold";
                 }
             }
         }
 
+        // Clears all textboxes and dropdowns
         protected void btnClear_Click(object sender, EventArgs e)
         {
             txtFullName.Text = "";
@@ -159,8 +132,6 @@ namespace Group_9
 
             txtPassword.Text = "";
             txtConfirmPassword.Text = "";
-
-            lblMessage.Visible = false;
         }
     }
 }
