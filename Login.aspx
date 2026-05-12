@@ -42,6 +42,15 @@
             </div>
             
             <div class="card-body p-4">
+
+                <!-- VALIDATION SUMMARY -->
+                <asp:ValidationSummary 
+                    ID="ValidationSummary1"
+                    runat="server"
+                    HeaderText="Please fix the following errors:"
+                    CssClass="text-danger fw-bold mb-3" />
+
+                 <!-- LOGIN TYPE -->
                 <div class="mb-4 text-center">
                     <label class="form-label fw-bold d-block">I am logging in as a:</label>
                     <div class="d-flex justify-content-center">
@@ -56,25 +65,58 @@
                 <hr />
 
                 <div class="row g-3">
+
+                     <!-- EMAIL -->
                     <div class="col-md-12">
                         <label class="form-label">Email Address</label>
                         <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email" placeholder="Enter your email"></asp:TextBox>
+
+                          <!-- REQUIRED VALIDATOR -->
+                        <asp:RequiredFieldValidator
+                            ID="rfvEmail"
+                            runat="server"
+                            ControlToValidate="txtEmail"
+                            ErrorMessage="Email Address is required"
+                            ForeColor="Red" />
+
+                         <!-- EMAIL FORMAT VALIDATOR -->
+                        <asp:RegularExpressionValidator
+                            ID="revEmail"
+                            runat="server"
+                            ControlToValidate="txtEmail"
+                            ValidationExpression="\w+([-\+.’]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"
+                            ErrorMessage="Enter a valid email address"
+                            ForeColor="Red" />
                     </div>
                     
+                    <!-- PASSWORD -->
                     <div class="col-md-12">
                         <label class="form-label">Password</label>
                         <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter your password"></asp:TextBox>
+
+                        <!-- REQUIRED VALIDATOR -->
+                        <asp:RequiredFieldValidator
+                            ID="rfvPassword"
+                            runat="server"
+                            ControlToValidate="txtPassword"
+                            ErrorMessage="Password is required"
+                            ForeColor="Red" />
+
                     </div>
                 </div>
 
+                <!-- LOGIN BUTTON -->
                 <div class="mt-4">
                     <asp:Button ID="btnLogin" runat="server" Text="Log In" CssClass="btn btn-custom-primary" OnClick="btnLogin_Click" />
+
                 </div>
 
+                <!-- MESSAGE -->
                 <div class="mt-3 text-center">
                     <asp:Label ID="lblLoginMessage" runat="server" CssClass="fw-bold text-danger"></asp:Label>
                 </div>
                 
+                 <!-- REGISTER LINK -->
                 <div class="mt-3 text-center">
                     <p class="text-muted small">Don't have an account? <a href="Register.aspx" class="text-decoration-none">Register here</a></p>
                 </div>
