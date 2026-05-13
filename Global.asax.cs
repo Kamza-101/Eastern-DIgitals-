@@ -28,9 +28,12 @@ namespace Group_9
                 string errorDetails = $"CRITICAL ERROR | URL: {Request.Url} | Type: {innerEx.GetType().Name} | Message: {innerEx.Message}";
 
                 // Determine who caused the error (System if not logged in)
-                string user = Session != null && Session["UserID"] != null
-                              ? Session["UserID"].ToString()
-                              : "SYSTEM";
+                // Determine who caused the error safely
+                string user = "SYSTEM";
+                if (HttpContext.Current != null && HttpContext.Current.Session != null && HttpContext.Current.Session["UserID"] != null)
+                {
+                    user = HttpContext.Current.Session["UserID"].ToString();
+                }
 
                 // 3. Log it to the AuditLogs database table
                 string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
@@ -58,7 +61,7 @@ namespace Group_9
                 Server.ClearError();
 
                 // 5. Redirect the user to a friendly custom error page
-                Response.Redirect("~/Error.aspx", false);
+                Response.Redirect("~/Errors.aspx", false);
             }
         }
     }

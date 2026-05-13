@@ -6,6 +6,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Net;
+using System.Net.Mail;
 
 namespace Group_9
 {
@@ -124,6 +126,94 @@ namespace Group_9
                     throw; // Passes system crash to Global.asax
                 }
             }
+        }
+
+        // Toggles the visibility of the Forgot Password panel
+        protected void btnShowForgot_Click(object sender, EventArgs e)
+        {
+            pnlForgot.Visible = !pnlForgot.Visible;
+            lblForgotMessage.Text = "";
+        }
+
+        // Handles the actual password retrieval and email sending
+        protected void btnSendPassword_Click(object sender, EventArgs e)
+        {
+            string email = txtForgotEmail.Text.Trim();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                lblForgotMessage.Text = "Please enter your email address.";
+                lblForgotMessage.CssClass = "text-danger";
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    // 1. Find the password for this email
+                    string sql = "SELECT Password FROM Users WHERE Email = @Email";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        string password = result.ToString();
+
+                        // 2. Send the email
+                        SendPasswordEmail(email, password);
+
+                        lblForgotMessage.Text = "Your password has been successfully sent to your email!";
+                        lblForgotMessage.CssClass = "text-success";
+
+                        // 3. Log this sensitive action to the AuditLogs table!
+                        string logSql = "INSERT INTO AuditLogs (UserName, ActionDescription, LogTime) VALUES (@User, @Action, GETDATE())";
+                        using (SqlCommand logCmd = new SqlCommand(logSql, conn))
+                        {
+                            logCmd.Parameters.AddWithValue("@User", email);
+                            logCmd.Parameters.AddWithValue("@Action", "User requested a direct password recovery via email.");
+                            logCmd.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        lblForgotMessage.Text = "This email is not registered in our system.";
+                        lblForgotMessage.CssClass = "text-danger";
+                    }
+                }
+                catch (Exception)
+                {
+                    // Securely pass system crashes up to Global.asax as mandated by Lecture 8
+                    throw;
+                }
+            }
+        }
+
+        // The SMTP Email Configuration
+        private void SendPasswordEmail(string toEmail, string password)
+        {
+            // Set up the email message
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress("dstixx809@gmail.com", "EasternDigital Support"); // Put your email here
+            mail.To.Add(toEmail);
+            mail.Subject = "EasternDigital - Password Recovery";
+
+            mail.Body = $"Hello,\n\nAs requested, here is your password for your EasternDigital account:\n\n" +
+                        $"Password: {password}\n\n" +
+                        $"Please keep your credentials safe.\n\nRegards,\nThe EasternDigital Team";
+
+            // Configure the SMTP Server (Using Gmail as an example)
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+            smtp.EnableSsl = true;
+            smtp.UseDefaultCredentials = false;
+
+            // Put your email and your Google App Password here
+            smtp.Credentials = new NetworkCredential("dstixx809@gmail.com", "arqmogbqqwirshyx");
+
+            smtp.Send(mail);
         }
     }
 }
