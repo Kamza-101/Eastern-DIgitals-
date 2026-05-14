@@ -67,17 +67,17 @@ namespace Group_9
                 {
                     // NEW: Join with ServiceProviders to get IsPremium, sort by IsPremium DESC
                     string query = @"
-                        SELECT 
-                            s.ServiceID, 
-                            s.ServiceName, 
-                            s.Description, 
-                            s.Price, 
-                            s.Icon, 
-                            s.Tag, 
-                            ISNULL(p.IsPremium, 0) AS IsPremium 
-                        FROM Services s
-                        INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID 
-                        WHERE 1=1";
+                    SELECT 
+                        s.ServiceID,
+                        s.ServiceName,
+                        s.Description,
+                        s.Price,
+                        s.Icon,
+                        s.Tag,
+                        ISNULL(p.IsPremium, 0) AS IsPremium 
+                    FROM Services s
+                    INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID
+                    WHERE 1=1";
 
                     // Append category filter if it's not "All"
                     if (category != "All")
