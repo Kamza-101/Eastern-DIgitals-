@@ -1,0 +1,2 @@
+﻿ALTER TABLE ServiceProviders
+ADD IsPremium BIT NOT NULL DEFAULT 0;
