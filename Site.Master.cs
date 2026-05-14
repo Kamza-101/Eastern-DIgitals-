@@ -13,13 +13,18 @@ namespace Group_9
         {
             if (Session["UserID"] == null)
             {
+                // User is not logged in (Guest)
                 phGuestNav.Visible = true;
+                phLogoutNav.Visible = false;
+
+                // Hide all role-specific navigation
                 phMemberNav.Visible = false;
                 phProviderNav.Visible = false;
-                phLogoutNav.Visible = false;
+                phAdminNav.Visible = false;
             }
             else
             {
+                // User is logged in
                 phGuestNav.Visible = false;
                 phLogoutNav.Visible = true;
 
@@ -29,21 +34,23 @@ namespace Group_9
                 {
                     phMemberNav.Visible = false;
                     phProviderNav.Visible = true;
+                    phAdminNav.Visible = false;
                 }
                 else if (role == "Seeker")
                 {
                     phProviderNav.Visible = false;
                     phMemberNav.Visible = true;
+                    phAdminNav.Visible = false;
                 }
                 else if (role == "Admin")
                 {
                     phMemberNav.Visible = false;
                     phProviderNav.Visible = false;
+                    phAdminNav.Visible = true; // This makes the Reports & Admin Dashboard visible!
                 }
             }
-        } // <-- Make sure Page_Load closes here!
+        }
 
-        // ADD THIS METHOD BACK IN:
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             // Clear all data stored in the server memory 
@@ -55,6 +62,5 @@ namespace Group_9
             // Redirect the user back to the public Home page
             Response.Redirect("Default.aspx");
         }
-
     }
 }

@@ -14,14 +14,60 @@ namespace Group_9
         {
             if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "Provider")
             {
-                Response.Redirect("Login.aspx");
+                Response.Redirect("Login.aspx", false);
+                return;
             }
 
             if (!IsPostBack)
             {
+                if (Request.QueryString["upgrade"] == "success")
+                {
+                    lblUpgradeSuccess.Text = "Payment successful! Welcome to EasternDigital Premium.";
+                    lblUpgradeSuccess.Visible = true;
+                }
+
+                CheckPremiumStatus();
                 LoadDashboardMetrics();
                 BindProviderBookings();
                 BindEarningsHistory();
+            }
+        }
+
+        private void CheckPremiumStatus()
+        {
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    string sql = "SELECT IsPremium FROM ServiceProviders WHERE UserID = @UID";
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@UID", userId);
+
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        bool isPremium = Convert.ToBoolean(result);
+
+                        if (isPremium)
+                        {
+                            pnlBasicStatus.Visible = false;
+                            pnlPremiumStatus.Visible = true;
+                        }
+                        else
+                        {
+                            pnlBasicStatus.Visible = true;
+                            pnlPremiumStatus.Visible = false;
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Premium Check Error: " + ex.Message);
+                }
             }
         }
 
@@ -35,8 +81,8 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // 1. Total Revenue & Goal Bar
-                    string qRevenue = @"SELECT ISNULL(SUM(b.TotalCost), 0) 
+                    // FIXED: Added nested ISNULL to protect against NULL math crashes
+                    string qRevenue = @"SELECT ISNULL(SUM(ISNULL(b.TotalCost, 0)), 0) 
                                         FROM Bookings b 
                                         INNER JOIN Services s ON b.ServiceID = s.ServiceID 
                                         INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID
@@ -139,9 +185,10 @@ namespace Group_9
             {
                 try
                 {
+                    // FIXED: Added ISNULL(b.TotalCost, 0) to prevent crash on empty price
                     string sql = @"
                         SELECT 
-                            b.TotalCost, 
+                            ISNULL(b.TotalCost, 0) AS TotalCost, 
                             ISNULL(s.ServiceName, 'Unknown Service') AS ServiceName, 
                             FORMAT(b.BookingDate, 'MMM dd, yyyy') AS FormattedDate
                         FROM Bookings b

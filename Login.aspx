@@ -43,15 +43,13 @@
             
             <div class="card-body p-4">
 
-                <!-- VALIDATION SUMMARY -->
                 <asp:ValidationSummary 
                     ID="ValidationSummary1"
                     runat="server"
                     HeaderText="Please fix the following errors:"
                     CssClass="text-danger fw-bold mb-3" />
 
-                 <!-- LOGIN TYPE -->
-                <div class="mb-4 text-center">
+                 <div class="mb-4 text-center">
                     <label class="form-label fw-bold d-block">I am logging in as a:</label>
                     <div class="d-flex justify-content-center">
                         <asp:RadioButtonList ID="rblLoginType" runat="server" RepeatDirection="Horizontal" CssClass="mx-auto">
@@ -66,21 +64,18 @@
 
                 <div class="row g-3">
 
-                     <!-- EMAIL -->
-                    <div class="col-md-12">
+                     <div class="col-md-12">
                         <label class="form-label">Email Address</label>
                         <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email" placeholder="Enter your email"></asp:TextBox>
 
-                          <!-- REQUIRED VALIDATOR -->
-                        <asp:RequiredFieldValidator
+                          <asp:RequiredFieldValidator
                             ID="rfvEmail"
                             runat="server"
                             ControlToValidate="txtEmail"
                             ErrorMessage="Email Address is required"
                             ForeColor="Red" />
 
-                         <!-- EMAIL FORMAT VALIDATOR -->
-                        <asp:RegularExpressionValidator
+                         <asp:RegularExpressionValidator
                             ID="revEmail"
                             runat="server"
                             ControlToValidate="txtEmail"
@@ -89,12 +84,10 @@
                             ForeColor="Red" />
                     </div>
                     
-                    <!-- PASSWORD -->
                     <div class="col-md-12">
                         <label class="form-label">Password</label>
                         <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter your password"></asp:TextBox>
 
-                        <!-- REQUIRED VALIDATOR -->
                         <asp:RequiredFieldValidator
                             ID="rfvPassword"
                             runat="server"
@@ -105,20 +98,28 @@
                     </div>
                 </div>
 
-                <!-- LOGIN BUTTON -->
                 <div class="mt-4">
                     <asp:Button ID="btnLogin" runat="server" Text="Log In" CssClass="btn btn-custom-primary" OnClick="btnLogin_Click" />
-
                 </div>
 
-                <!-- MESSAGE -->
                 <div class="mt-3 text-center">
                     <asp:Label ID="lblLoginMessage" runat="server" CssClass="fw-bold text-danger"></asp:Label>
                 </div>
                 
-                 <!-- REGISTER LINK -->
-                <div class="mt-3 text-center">
-                    <p class="text-muted small">Don't have an account? <a href="Register.aspx" class="text-decoration-none">Register here</a></p>
+                <div class="mt-2 text-center">
+                    <asp:LinkButton ID="btnShowForgot" runat="server" CssClass="text-primary text-decoration-underline small fw-bold" OnClick="btnShowForgot_Click" CausesValidation="false">Forgot your password?</asp:LinkButton>
+                </div>
+
+                <asp:Panel ID="pnlForgot" runat="server" Visible="false" CssClass="mt-3 p-3 border rounded bg-light text-start">
+                    <h6 class="fw-bold text-dark">Password Recovery</h6>
+                    <p class="small text-muted mb-2">Enter your registered email and we will send your password to you.</p>
+                    <asp:TextBox ID="txtForgotEmail" runat="server" CssClass="form-control form-control-sm mb-2" TextMode="Email" placeholder="Email address"></asp:TextBox>
+                    <asp:Button ID="btnSendPassword" runat="server" Text="Send Password" CssClass="btn btn-sm btn-dark w-100" OnClick="btnSendPassword_Click" CausesValidation="false" />
+                    <asp:Label ID="lblForgotMessage" runat="server" CssClass="d-block mt-2 small fw-bold text-center"></asp:Label>
+                </asp:Panel>
+
+                <div class="mt-4 text-center">
+                    <p class="text-muted small">Don't have an account? <a href="Register.aspx" class="text-decoration-none fw-bold">Register here</a></p>
                 </div>
             </div>
         </div>

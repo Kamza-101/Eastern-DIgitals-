@@ -17,7 +17,24 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Only load the initial list once when the page first opens
+            // SECURITY BOUNCER: If an Admin or Provider tries to access this page, bounce them back!
+            if (Session["UserRole"] != null)
+            {
+                string role = Session["UserRole"].ToString();
+
+                if (role == "Admin")
+                {
+                    Response.Redirect("AdminDashboard.aspx", false);
+                    return; // Stop running the rest of the page code
+                }
+                else if (role == "Provider")
+                {
+                    Response.Redirect("ProviderDashboard.aspx", false);
+                    return; // Stop running the rest of the page code
+                }
+            }
+
+            // THE FIX: Automatically load the catalogue on the first visit
             if (!IsPostBack)
             {
                 BindServices();
@@ -36,7 +53,7 @@ namespace Group_9
             BindServices();
         }
 
-        // 4. The Main ADO.NET Logic Method
+        // 4. The Main ADO.NET Logic Method (UPDATED FOR PREMIUM SORTING)
         private void BindServices()
         {
             string category = ddlCategory.SelectedValue;
@@ -48,20 +65,34 @@ namespace Group_9
             {
                 try
                 {
-                    // WHERE 1=1 is a trick that makes appending "AND" statements easier
-                    string query = "SELECT ServiceID, ServiceName, Description, Price, Icon, Tag FROM Services WHERE 1=1";
+                    // NEW: Join with ServiceProviders to get IsPremium, sort by IsPremium DESC
+                    string query = @"
+                        SELECT 
+                            s.ServiceID, 
+                            s.ServiceName, 
+                            s.Description, 
+                            s.Price, 
+                            s.Icon, 
+                            s.Tag, 
+                            ISNULL(p.IsPremium, 0) AS IsPremium 
+                        FROM Services s
+                        INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID 
+                        WHERE 1=1";
 
                     // Append category filter if it's not "All"
                     if (category != "All")
                     {
-                        query += " AND Category = @Cat";
+                        query += " AND s.Category = @Cat";
                     }
 
                     // Append text search filter if the user typed something
                     if (!string.IsNullOrEmpty(searchTerm))
                     {
-                        query += " AND (ServiceName LIKE @Search OR Description LIKE @Search)";
+                        query += " AND (s.ServiceName LIKE @Search OR s.Description LIKE @Search)";
                     }
+
+                    // NEW: Force Premium Providers to the top of the search results
+                    query += " ORDER BY p.IsPremium DESC, s.ServiceName ASC";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -86,15 +117,16 @@ namespace Group_9
                     rptServices.DataSource = dt;
                     rptServices.DataBind();
                 }
-                catch (SqlException ex)
+                catch (SqlException)
                 {
-                    // ADO.NET Error Handling: Catch database-specific crashes
-                    Response.Write("<script>alert('Database Error: " + ex.Message + "');</script>");
+                    // LECTURE 8 COMPLIANCE: Do not expose raw database errors to the UI.
+                    // We throw this exception up to Global.asax so it can be logged in the AuditLogs securely!
+                    throw;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    // ADO.NET Error Handling: Catch general logic crashes
-                    Response.Write("<script>alert('System Error: " + ex.Message + "');</script>");
+                    // LECTURE 8 COMPLIANCE: Catch general logic crashes and pass them to Global.asax
+                    throw;
                 }
             }
         }
@@ -109,12 +141,12 @@ namespace Group_9
                 // Security Check
                 if (Session["UserID"] == null)
                 {
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Login.aspx", false);
                 }
                 else
                 {
                     // Redirects to ServiceDetails and passes the ID in the URL
-                    Response.Redirect("ServiceDetails.aspx?ServiceID=" + serviceId);
+                    Response.Redirect("ServiceDetails.aspx?ServiceID=" + serviceId, false);
                 }
             }
         }

@@ -60,12 +60,36 @@
             justify-content: center;
             border: 1px solid #e9ecef;
         }
+        
+        /* Premium Banner Styling */
+        .premium-banner {
+            background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+            color: #000;
+            border: none;
+        }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container py-5" style="max-width: 1000px;">
         <h2 class="fw-bold mb-4">Dashboard</h2>
+
+        <asp:Label ID="lblUpgradeSuccess" runat="server" CssClass="alert alert-success d-block fw-bold mb-4 rounded-4 shadow-sm" Visible="false"></asp:Label>
+
+        <asp:Panel ID="pnlBasicStatus" runat="server" CssClass="alert alert-warning d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 shadow-sm rounded-4 border-0">
+            <div class="mb-3 mb-md-0">
+                <h5 class="fw-bold mb-1">Boost Your Profile!</h5>
+                <p class="mb-0 text-dark">Upgrade to Premium for R50/month to appear at the top of student searches and get a verified badge.</p>
+            </div>
+            <a href="UpgradePremium.aspx" class="btn btn-dark fw-bold rounded-pill px-4 py-2 shadow-sm text-nowrap">Upgrade Now</a>
+        </asp:Panel>
+
+        <asp:Panel ID="pnlPremiumStatus" runat="server" Visible="false" CssClass="alert premium-banner d-flex justify-content-between align-items-center mb-4 shadow-sm rounded-4">
+            <div>
+                <h5 class="fw-bold mb-1">⭐ Premium Member</h5>
+                <p class="mb-0">Your profile is currently boosted in EasternDigital student search results.</p>
+            </div>
+        </asp:Panel>
         
         <div class="row g-4 mb-4">
             <div class="col-md-4">
@@ -131,17 +155,20 @@
                             <asp:Button ID="btnApprove" runat="server" Text="Approve" 
                                 CssClass="btn btn-success fw-bold rounded-pill px-4 shadow-sm" 
                                 CommandName="Approve" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' />
+                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
+                                CausesValidation="false" />
                                 
                             <asp:Button ID="btnReject" runat="server" Text="Reject" 
                                 CssClass="btn btn-outline-danger fw-bold rounded-pill px-4" 
                                 CommandName="Reject" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' />
+                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
+                                CausesValidation="false" />
 
                             <asp:Button ID="btnComplete" runat="server" Text="Mark as Completed ✓" 
                                 CssClass="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" 
                                 CommandName="Complete" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Approved" %>' />
+                                Visible='<%# Convert.ToString(Eval("Status")) == "Approved" %>' 
+                                CausesValidation="false" />
                         </div>
                         
                     </div>

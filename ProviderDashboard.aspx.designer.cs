@@ -15,6 +15,33 @@ namespace Group_9
     {
 
         /// <summary>
+        /// lblUpgradeSuccess control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUpgradeSuccess;
+
+        /// <summary>
+        /// pnlBasicStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlBasicStatus;
+
+        /// <summary>
+        /// pnlPremiumStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPremiumStatus;
+
+        /// <summary>
         /// lblTotalRevenue control.
         /// </summary>
         /// <remarks>
