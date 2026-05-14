@@ -66,6 +66,28 @@
             </div>
         </div>
 
+        <h4 class="mt-5 mb-3 fw-bold">Platform Monetization (Live Profit)</h4>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="metric-card" style="background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);">
+                    <div class="metric-value"><asp:Label ID="lblPremiumProviders" runat="server" Text="0"></asp:Label></div>
+                    <div class="metric-label" style="color: #000; font-weight: bold;">⭐ Premium Subscriptions</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="metric-card">
+                    <div class="metric-value" style="color: var(--ios-green);">R <asp:Label ID="lblMRR" runat="server" Text="0.00"></asp:Label></div>
+                    <div class="metric-label">Monthly Recurring Revenue</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="metric-card">
+                    <div class="metric-value" style="color: var(--ios-blue);">R <asp:Label ID="lblTotalProfit" runat="server" Text="0.00"></asp:Label></div>
+                    <div class="metric-label">Total Profit (inc. 5% Fees)</div>
+                </div>
+            </div>
+        </div>
+
         <asp:Label ID="lblAdminMessage" runat="server" CssClass="alert alert-info d-block mt-4 fw-bold" Visible="false"></asp:Label>
 
         <div class="activity-card">

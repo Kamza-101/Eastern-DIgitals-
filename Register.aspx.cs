@@ -35,6 +35,15 @@ namespace Group_9
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
+            // 0. NEW STRICT POPIA COMPLIANCE CHECK
+            if (!chkPOPIA.Checked)
+            {
+                lblMessage.Text = "You must read and agree to the POPIA Privacy Policy to create an account.";
+                lblMessage.CssClass = "text-danger fw-bold";
+                lblMessage.Visible = true;
+                return;
+            }
+
             string role = rblUserType.SelectedValue;
             string password = txtPassword.Text.Trim();
             string email = "";
@@ -159,6 +168,9 @@ namespace Group_9
 
             txtPassword.Text = "";
             txtConfirmPassword.Text = "";
+
+            // Uncheck the POPIA box on clear
+            chkPOPIA.Checked = false;
 
             lblMessage.Visible = false;
         }

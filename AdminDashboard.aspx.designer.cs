@@ -51,6 +51,33 @@ namespace Group_9
         protected global::System.Web.UI.WebControls.Label lblSystemHealth;
 
         /// <summary>
+        /// lblPremiumProviders control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPremiumProviders;
+
+        /// <summary>
+        /// lblMRR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMRR;
+
+        /// <summary>
+        /// lblTotalProfit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalProfit;
+
+        /// <summary>
         /// lblAdminMessage control.
         /// </summary>
         /// <remarks>

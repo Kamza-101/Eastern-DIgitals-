@@ -3,10 +3,11 @@
     <style>
     .service-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
+        border: 1px solid transparent;
         border-radius: 12px;
         box-shadow: 0 4px 6px whitesmoke;
         height: 100%;
+        position: relative; /* Required for absolute badges */
     }
     .service-card:hover {
         transform: translateY(-5px);
@@ -23,6 +24,19 @@
         position: absolute;
         top: 15px;
         right: 15px;
+    }
+    /* NEW: Styling for the Premium Badge */
+    .featured-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    /* NEW: Styling for the Premium Card Border */
+    .premium-border {
+        border: 2px solid #FFD700 !important;
+        box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
     }
     .search-bar-container {
         background-color: darkslategray;
@@ -57,7 +71,14 @@
             <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
                 <ItemTemplate>
                     <div class="col">
-                        <div class="card service-card h-100">
+                        <div class='<%# Convert.ToBoolean(Eval("IsPremium")) ? "card service-card premium-border h-100" : "card service-card h-100" %>'>
+                            
+                            <asp:Label ID="lblFeatured" runat="server" 
+                                Visible='<%# Convert.ToBoolean(Eval("IsPremium")) %>' 
+                                CssClass="badge bg-warning text-dark featured-badge">
+                                ⭐ Featured
+                            </asp:Label>
+
                             <span class="badge bg-success category-badge"><%# Eval("Tag") %></span>
                             <div class="card-icon-wrapper">
                                 <h1 class="display-4 mb-0"><%# Eval("Icon") %></h1>

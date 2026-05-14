@@ -126,6 +126,15 @@
                     </div>
                 </div>
 
+                <div class="mt-4 mb-2 p-3 bg-light border rounded">
+                    <div class="form-check d-flex align-items-center gap-2">
+                        <asp:CheckBox ID="chkPOPIA" runat="server" />
+                        <label class="form-label mb-0">
+                            I have read and agree to the <a href="POPIA.aspx" target="_blank" class="fw-bold text-decoration-none">POPIA Privacy Policy</a> detailing how EasternDigital securely processes my information. <span class="text-danger">*</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="mt-4 d-flex gap-2">
                     <asp:Button ID="btnRegister" runat="server" Text="Create Account" CssClass="btn btn-custom-primary" OnClick="btnRegister_Click" />
                     <asp:Button ID="btnClear" runat="server" Text="Clear Form" CssClass="btn btn-custom-clear" OnClick="btnClear_Click" CausesValidation="false" />

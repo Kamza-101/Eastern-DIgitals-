@@ -56,6 +56,27 @@ namespace Group_9
                     // 3. Pending Bookings
                     SqlCommand cmdBookings = new SqlCommand("SELECT COUNT(*) FROM Bookings WHERE Status = 'Pending Confirmation'", conn);
                     lblPendingBookings.Text = cmdBookings.ExecuteScalar().ToString();
+
+                    // ==========================================
+                    // NEW: MONETIZATION METRICS CALCULATION
+                    // ==========================================
+
+                    // 4. Premium Providers Count
+                    SqlCommand cmdPremium = new SqlCommand("SELECT COUNT(*) FROM ServiceProviders WHERE IsPremium = 1", conn);
+                    int premiumCount = Convert.ToInt32(cmdPremium.ExecuteScalar());
+                    lblPremiumProviders.Text = premiumCount.ToString();
+
+                    // 5. Calculate Monthly Recurring Revenue (MRR) - R50 per Premium Provider
+                    decimal mrr = premiumCount * 50m;
+                    lblMRR.Text = mrr.ToString("0.00");
+
+                    // 6. Calculate 5% Commission on all Completed Bookings
+                    SqlCommand cmdCommission = new SqlCommand("SELECT ISNULL(SUM(TotalCost * 0.05), 0) FROM Bookings WHERE Status = 'Completed'", conn);
+                    decimal commission = Convert.ToDecimal(cmdCommission.ExecuteScalar());
+
+                    // 7. Calculate Total Platform Profit
+                    decimal totalProfit = mrr + commission;
+                    lblTotalProfit.Text = totalProfit.ToString("0.00");
                 }
                 catch (Exception ex)
                 {
@@ -65,7 +86,7 @@ namespace Group_9
             }
         }
 
-        // NEW: Loads Providers who are waiting to be approved
+        // Loads Providers who are waiting to be approved
         private void LoadPendingProviders()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -84,7 +105,7 @@ namespace Group_9
             }
         }
 
-        // NEW: Loads all active and suspended users (excluding Admins and pending providers)
+        // Loads all active and suspended users (excluding Admins and pending providers)
         private void LoadAllUsers()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -125,7 +146,7 @@ namespace Group_9
             }
         }
 
-        // NEW: Handles Accept/Decline for new Providers
+        // Handles Accept/Decline for new Providers
         protected void rptPendingProviders_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             string userId = e.CommandArgument.ToString();
@@ -138,7 +159,7 @@ namespace Group_9
             RefreshAllData();
         }
 
-        // NEW: Handles Suspend/Activate for existing users
+        // Handles Suspend/Activate for existing users
         protected void rptAllUsers_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "ToggleStatus")
