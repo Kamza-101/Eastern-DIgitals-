@@ -26,11 +26,97 @@ namespace Group_9
                     lblUpgradeSuccess.Visible = true;
                 }
 
+                // Call the safe method to load the top-right profile widget
+                LoadProviderProfile();
+
                 CheckPremiumStatus();
                 LoadDashboardMetrics();
                 BindProviderBookings();
                 BindEarningsHistory();
             }
+        }
+
+        // BULLETPROOF PROFILE LOAD: Pulls data safely without crashing on missing columns
+        private void LoadProviderProfile()
+        {
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
+                {
+                    // We select everything (*) from Users and ServiceProviders to ensure we grab the right columns
+                    string query = @"
+                        SELECT 
+                            u.*, 
+                            sp.*,
+                            (SELECT TOP 1 ServiceName FROM Services WHERE ProviderID = sp.ProviderID) AS ServiceType
+                        FROM Users u
+                        INNER JOIN ServiceProviders sp ON u.UserID = sp.UserID
+                        WHERE u.UserID = @UID";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@UID", userId);
+
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // Safely extract values (Checks for both FullName AND FirstName/LastName just in case)
+                            string fullName = SafeGetString(reader, "FullName");
+                            if (string.IsNullOrWhiteSpace(fullName))
+                            {
+                                fullName = SafeGetString(reader, "FirstName") + " " + SafeGetString(reader, "LastName");
+                            }
+
+                            // Safely check for Phone or PhoneNumber
+                            string contact = SafeGetString(reader, "PhoneNumber");
+                            if (string.IsNullOrWhiteSpace(contact)) contact = SafeGetString(reader, "Phone");
+
+                            string serviceType = SafeGetString(reader, "ServiceType");
+                            string location = SafeGetString(reader, "City");
+
+                            // 1. Bind Name
+                            lblProviderName.Text = string.IsNullOrWhiteSpace(fullName.Trim()) ? "Service Provider" : fullName.Trim();
+
+                            // 2. Set the initial circle (first letter of name)
+                            if (!string.IsNullOrWhiteSpace(fullName.Trim()))
+                            {
+                                lblProviderInitial.Text = fullName.Trim().Substring(0, 1).ToUpper();
+                            }
+                            else
+                            {
+                                lblProviderInitial.Text = "P";
+                            }
+
+                            // 3. Fallbacks for missing info
+                            lblServiceType.Text = string.IsNullOrWhiteSpace(serviceType) ? "Registered Provider" : serviceType;
+                            
+                            
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Profile Load Error: " + ex.Message);
+                    lblProviderName.Text = "Profile Loading...";
+                    lblProviderInitial.Text = "!";
+                }
+            }
+        }
+
+        // HELPER METHOD: This prevents "Column does not exist" crashes from breaking the card
+        private string SafeGetString(SqlDataReader reader, string columnName)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return reader[i] != DBNull.Value ? reader[i].ToString() : "";
+                }
+            }
+            return "";
         }
 
         private void CheckPremiumStatus()
@@ -277,8 +363,3 @@ namespace Group_9
         }
     }
 }
-
-
-
-
-
