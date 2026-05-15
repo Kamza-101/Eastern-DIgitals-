@@ -57,17 +57,17 @@ namespace Group_9
                 try
                 {
                     string query = @"
-                        SELECT 
-                            s.ServiceID, 
-                            s.ServiceName, 
-                            s.Description, 
-                            s.Price, 
-                            s.Icon, 
-                            s.Tag, 
-                            ISNULL(p.IsPremium, 0) AS IsPremium 
-                        FROM Services s
-                        INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID 
-                        WHERE 1=1";
+                    SELECT 
+                        s.ServiceID,
+                        s.ServiceName,
+                        s.Description,
+                        s.Price,
+                        s.Icon,
+                        s.Tag,
+                        ISNULL(p.IsPremium, 0) AS IsPremium 
+                    FROM Services s
+                    INNER JOIN ServiceProviders p ON s.ProviderID = p.ProviderID
+                    WHERE 1=1";
 
                     if (category != "All")
                     {

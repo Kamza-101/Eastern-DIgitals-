@@ -67,6 +67,7 @@
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
+
                 <ItemTemplate>
                     <div class="col">
                         <div class='<%# Convert.ToBoolean(Eval("IsPremium")) ? "card service-card premium-border h-100" : "card service-card h-100" %>'>
