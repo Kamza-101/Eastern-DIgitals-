@@ -36,14 +36,13 @@
             font-weight: bold;
             text-align: center;
         }
-        /* Dynamic Status Colors based on your wireframe */
         .status-pending {
             background-color: #ffe8cc;
-            color: #fd7e14; /* Orange for Pending */
+            color: #fd7e14; 
         }
         .status-approved {
             background-color: #d1e7dd;
-            color: #198754; /* Green for Approved */
+            color: #198754;
         }
     </style>
 </asp:Content>

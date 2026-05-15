@@ -81,7 +81,6 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // FIXED: Added nested ISNULL to protect against NULL math crashes
                     string qRevenue = @"SELECT ISNULL(SUM(ISNULL(b.TotalCost, 0)), 0) 
                                         FROM Bookings b 
                                         INNER JOIN Services s ON b.ServiceID = s.ServiceID 
@@ -94,7 +93,6 @@ namespace Group_9
                     decimal totalRev = Convert.ToDecimal(cmdRev.ExecuteScalar());
                     lblTotalRevenue.Text = "R " + totalRev.ToString("F2");
 
-                    // Calculate Goal Progress
                     decimal goalTarget = 5000m;
                     decimal percentage = totalRev > 0 ? (totalRev / goalTarget) * 100 : 0m;
                     decimal visualPercentage = percentage > 100 ? 100 : percentage;
@@ -103,7 +101,6 @@ namespace Group_9
                     lblGoalPercentage.Text = Math.Round(percentage, 0).ToString();
                     pnlProgressBar.Style.Add("width", visualPercentage.ToString("0") + "%");
 
-                    // 2. Active Bookings
                     string qActive = @"SELECT COUNT(*) 
                                        FROM Bookings b 
                                        INNER JOIN Services s ON b.ServiceID = s.ServiceID 
@@ -114,7 +111,6 @@ namespace Group_9
                     cmdAct.Parameters.AddWithValue("@UID", userId);
                     lblActiveBookings.Text = cmdAct.ExecuteScalar().ToString();
 
-                    // 3. Completed Jobs
                     string qComp = @"SELECT COUNT(*) 
                                      FROM Bookings b 
                                      INNER JOIN Services s ON b.ServiceID = s.ServiceID 
@@ -185,7 +181,6 @@ namespace Group_9
             {
                 try
                 {
-                    // FIXED: Added ISNULL(b.TotalCost, 0) to prevent crash on empty price
                     string sql = @"
                         SELECT 
                             ISNULL(b.TotalCost, 0) AS TotalCost, 
@@ -255,7 +250,6 @@ namespace Group_9
                     }
                 }
 
-                // Refresh the whole UI
                 LoadDashboardMetrics();
                 BindProviderBookings();
                 BindEarningsHistory();

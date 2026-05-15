@@ -16,7 +16,6 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // SECURITY BOUNCER: Only Admins can view the raw system logs
             if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "Admin")
             {
                 Response.Redirect("Login.aspx");
@@ -35,7 +34,6 @@ namespace Group_9
             {
                 try
                 {
-                    // Fetch EVERY log in the system, newest at the top
                     string sql = "SELECT UserName, ActionDescription, LogTime FROM AuditLogs ORDER BY LogTime DESC";
 
                     SqlDataAdapter da = new SqlDataAdapter(sql, conn);
@@ -65,7 +63,6 @@ namespace Group_9
                 }
                 catch (Exception ex)
                 {
-                    // Catch-all for missing tables or syntax errors
                     lblError.Text = "System Error: " + ex.Message;
                     lblError.Visible = true;
                 }

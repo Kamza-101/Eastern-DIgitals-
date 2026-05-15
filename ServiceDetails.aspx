@@ -7,7 +7,7 @@
             --ios-card: #ffffff;
             --ios-blue: #007aff;
             --ios-green: #2fa562;
-            --header-bg: #1e3d3d; /* Dark teal matching your design */
+            --header-bg: #1e3d3d; 
         }
         body { background-color: var(--ios-bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         

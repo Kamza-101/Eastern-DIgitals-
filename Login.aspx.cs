@@ -17,7 +17,6 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // STATE MANAGEMENT: Auto-redirect if the user is already logged in
             if (Session["UserID"] != null && Session["UserRole"] != null)
             {
                 string existingRole = Session["UserRole"].ToString();
@@ -30,7 +29,6 @@ namespace Group_9
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            // Stop if validation fails
             if (!Page.IsValid)
             {
                 return;
@@ -52,7 +50,6 @@ namespace Group_9
 
                     conn.Open();
 
-                    // Track success so we can log it AFTER the DataReader closes
                     bool isLoginSuccessful = false;
                     string redirectPage = "";
 
@@ -68,7 +65,7 @@ namespace Group_9
                             {
                                 lblLoginMessage.Text = "Incorrect password. Please try again.";
                                 lblLoginMessage.CssClass = "text-danger fw-bold";
-                                return; // Stop here
+                                return; 
                             }
 
                             if (status == "Pending")
@@ -83,13 +80,11 @@ namespace Group_9
                             }
                             else if (status == "Active")
                             {
-                                // Passwords match and account is active!
                                 Session["UserID"] = dbUserId;
                                 Session["UserRole"] = role;
 
-                                isLoginSuccessful = true; // Mark as successful
+                                isLoginSuccessful = true; 
 
-                                // Determine where they go
                                 if (role == "Admin") redirectPage = "AdminDashboard.aspx";
                                 else if (role == "Provider") redirectPage = "ProviderDashboard.aspx";
                                 else redirectPage = "BrowseServices.aspx";
@@ -100,9 +95,8 @@ namespace Group_9
                             lblLoginMessage.Text = "No account found with this email address for the selected role.";
                             lblLoginMessage.CssClass = "text-danger fw-bold";
                         }
-                    } // The SqlDataReader safely closes here!
+                    } 
 
-                    // IF SUCCESSFUL: Write to AuditLogs, then redirect
                     if (isLoginSuccessful)
                     {
                         string logSql = "INSERT INTO AuditLogs (UserName, ActionDescription, LogTime) VALUES (@User, @Action, GETDATE())";
@@ -110,32 +104,29 @@ namespace Group_9
                         {
                             logCmd.Parameters.AddWithValue("@User", email);
                             logCmd.Parameters.AddWithValue("@Action", "User successfully logged in as " + role);
-                            logCmd.ExecuteNonQuery(); // Physically saves the log
+                            logCmd.ExecuteNonQuery(); 
                         }
 
-                        // Now bounce them to their dashboard
                         Response.Redirect(redirectPage, false);
                     }
                 }
                 catch (SqlException)
                 {
-                    throw; // Passes database crash to Global.asax
+                    throw; 
                 }
                 catch (Exception)
                 {
-                    throw; // Passes system crash to Global.asax
+                    throw; 
                 }
             }
         }
 
-        // Toggles the visibility of the Forgot Password panel
         protected void btnShowForgot_Click(object sender, EventArgs e)
         {
             pnlForgot.Visible = !pnlForgot.Visible;
             lblForgotMessage.Text = "";
         }
 
-        // Handles the actual password retrieval and email sending
         protected void btnSendPassword_Click(object sender, EventArgs e)
         {
             string email = txtForgotEmail.Text.Trim();
@@ -151,7 +142,6 @@ namespace Group_9
             {
                 try
                 {
-                    // 1. Find the password for this email
                     string sql = "SELECT Password FROM Users WHERE Email = @Email";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -163,13 +153,11 @@ namespace Group_9
                     {
                         string password = result.ToString();
 
-                        // 2. Send the email
                         SendPasswordEmail(email, password);
 
                         lblForgotMessage.Text = "Your password has been successfully sent to your email!";
                         lblForgotMessage.CssClass = "text-success";
 
-                        // 3. Log this sensitive action to the AuditLogs table!
                         string logSql = "INSERT INTO AuditLogs (UserName, ActionDescription, LogTime) VALUES (@User, @Action, GETDATE())";
                         using (SqlCommand logCmd = new SqlCommand(logSql, conn))
                         {
@@ -186,18 +174,15 @@ namespace Group_9
                 }
                 catch (Exception)
                 {
-                    // Securely pass system crashes up to Global.asax as mandated by Lecture 8
                     throw;
                 }
             }
         }
 
-        // The SMTP Email Configuration
         private void SendPasswordEmail(string toEmail, string password)
         {
-            // Set up the email message
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("dstixx809@gmail.com", "EasternDigital Support"); // Put your email here
+            mail.From = new MailAddress("dstixx809@gmail.com", "EasternDigital Support"); 
             mail.To.Add(toEmail);
             mail.Subject = "EasternDigital - Password Recovery";
 
@@ -205,12 +190,10 @@ namespace Group_9
                         $"Password: {password}\n\n" +
                         $"Please keep your credentials safe.\n\nRegards,\nThe EasternDigital Team";
 
-            // Configure the SMTP Server (Using Gmail as an example)
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
             smtp.EnableSsl = true;
             smtp.UseDefaultCredentials = false;
 
-            // Put your email and your Google App Password here
             smtp.Credentials = new NetworkCredential("dstixx809@gmail.com", "arqmogbqqwirshyx");
 
             smtp.Send(mail);

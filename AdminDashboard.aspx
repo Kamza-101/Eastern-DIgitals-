@@ -14,19 +14,16 @@
         .ios-container { padding: 30px; max-width: 1000px; margin: auto; }
         .page-title { font-size: 28px; font-weight: 800; margin-bottom: 25px; }
         
-        /* Metric Cards */
         .metric-card { background: var(--ios-card); padding: 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; height: 100%; }
         .metric-value { font-size: 32px; font-weight: 700; color: #000; }
         .metric-label { font-size: 14px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; }
         
-        /* Table / Activity Section */
         .activity-card { background: var(--ios-card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
         
-        /* Action Button */
+       
         .btn-ios { background-color: var(--ios-blue); color: white; padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block; transition: opacity 0.2s; border: none; cursor: pointer; }
         .btn-ios:hover { opacity: 0.8; color: white; }
         
-        /* Management Lists */
         .user-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
         .user-list-item:last-child { border-bottom: none; }
         .badge-role { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; background-color: #e6f2ff; color: var(--ios-blue); }

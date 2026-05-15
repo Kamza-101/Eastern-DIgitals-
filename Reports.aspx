@@ -18,7 +18,6 @@
         .btn-ios { background-color: var(--ios-blue); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; border: none; transition: 0.2s; width: 100%; }
         .btn-ios:hover { opacity: 0.8; }
         
-        /* Custom Table Styling for Reports */
         .table-report { margin-bottom: 0; width: 100%; border-collapse: collapse; }
         .table-report th { background-color: #f8f9fa; color: var(--ios-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 15px 20px; border-bottom: 2px solid #eaeaea; font-weight: 700; }
         .table-report td { padding: 15px 20px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }

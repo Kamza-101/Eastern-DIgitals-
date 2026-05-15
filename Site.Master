@@ -10,7 +10,7 @@
     
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
     <style>
-    /* iOS Apple-Style Navbar Settings */
+  
     .ios-navbar {
         background-color: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(15px);
@@ -21,8 +21,6 @@
         z-index: 1000;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-
-    /* Gradient Brand Name */
     .ios-nav-brand {
         background: linear-gradient(90deg, royalblue, mediumorchid);
         -webkit-background-clip: text;
@@ -31,8 +29,6 @@
         font-size: 1.4rem;
         letter-spacing: -0.5px;
     }
-
-    /* Refined iOS Nav Links */
     .ios-nav-link {
         font-size: 0.8rem;
         font-weight: 700;
@@ -42,7 +38,6 @@
         padding: 0.5rem 1rem !important;
         text-decoration: none; 
     }
-
     .ios-nav-link:hover {
         color: royalblue !important;
     }

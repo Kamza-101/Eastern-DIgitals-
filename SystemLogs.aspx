@@ -15,14 +15,12 @@
         
         .report-card { background: var(--ios-card); padding: 0; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; }
         
-        /* Custom Table Styling */
         .table-report { width: 100%; border-collapse: collapse; margin-bottom: 0; }
         .table-report th { background-color: #f8f9fa; color: var(--ios-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 15px 20px; border-bottom: 2px solid #eaeaea; text-align: left; font-weight: 700; }
         .table-report td { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; vertical-align: middle; }
         .table-report tr:last-child td { border-bottom: none; }
         .table-report tr:hover { background-color: #fafafa; }
         
-        /* Monospace font for exact time alignment */
         .log-time { font-family: 'SF Mono', Consolas, monospace; font-size: 0.85rem; color: #555; }
     </style>
 </asp:Content>

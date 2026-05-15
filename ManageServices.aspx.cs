@@ -53,14 +53,12 @@ namespace Group_9
             }
         }
 
-        // Toggles the form open
         protected void btnAddService_Click(object sender, EventArgs e)
         {
             pnlAddService.Visible = true;
             btnAddService.Visible = false;
         }
 
-        // Toggles the form closed
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             pnlAddService.Visible = false;
@@ -69,7 +67,6 @@ namespace Group_9
             txtPrice.Text = "";
         }
 
-        // Saves the data to the database
         protected void btnSaveService_Click(object sender, EventArgs e)
         {
             int userId = Convert.ToInt32(Session["UserID"]);
@@ -80,7 +77,6 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // 1. Get the actual ProviderID for this user
                     SqlCommand getProviderCmd = new SqlCommand("SELECT ProviderID FROM ServiceProviders WHERE UserID = @UID", conn);
                     getProviderCmd.Parameters.AddWithValue("@UID", userId);
                     object providerResult = getProviderCmd.ExecuteScalar();
@@ -89,7 +85,6 @@ namespace Group_9
                     {
                         int providerId = Convert.ToInt32(providerResult);
 
-                        // 2. Insert the new service
                         string sql = "INSERT INTO Services (ProviderID, ServiceName, Price, Category, Icon) VALUES (@PID, @Name, @Price, 'General', N'✨')";
                         SqlCommand cmd = new SqlCommand(sql, conn);
                         cmd.Parameters.AddWithValue("@PID", providerId);
@@ -98,7 +93,6 @@ namespace Group_9
 
                         cmd.ExecuteNonQuery();
 
-                        // Close form and refresh list
                         btnCancel_Click(sender, e);
                         LoadProviderServices();
                     }
@@ -116,7 +110,6 @@ namespace Group_9
             }
         }
 
-        // Deletes a service
         protected void rptMyServices_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Delete")
@@ -129,7 +122,7 @@ namespace Group_9
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
-                LoadProviderServices(); // Refresh screen
+                LoadProviderServices(); 
             }
         }
     }

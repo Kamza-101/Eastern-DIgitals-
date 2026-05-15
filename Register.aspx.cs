@@ -15,7 +15,6 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Reset message visibility on each postback so old errors disappear
             lblMessage.Visible = false;
         }
 
@@ -35,7 +34,6 @@ namespace Group_9
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // 0. NEW STRICT POPIA COMPLIANCE CHECK
             if (!chkPOPIA.Checked)
             {
                 lblMessage.Text = "You must read and agree to the POPIA Privacy Policy to create an account.";
@@ -48,7 +46,6 @@ namespace Group_9
             string password = txtPassword.Text.Trim();
             string email = "";
 
-            // 1. Password Match & Empty Check
             if (string.IsNullOrEmpty(password) || password != txtConfirmPassword.Text.Trim())
             {
                 lblMessage.Text = "Passwords do not match or are empty.";
@@ -57,7 +54,6 @@ namespace Group_9
                 return;
             }
 
-            // 2. Strict Role-Based Form Validation
             if (role == "Seeker")
             {
                 if (string.IsNullOrWhiteSpace(txtFullName.Text) ||
@@ -73,7 +69,7 @@ namespace Group_9
                 }
                 email = txtEmail.Text.Trim();
             }
-            else // Provider
+            else 
             {
                 if (string.IsNullOrWhiteSpace(txtProvName.Text) ||
                     string.IsNullOrWhiteSpace(txtProvSurname.Text) ||
@@ -91,7 +87,6 @@ namespace Group_9
                 email = txtProvEmail.Text.Trim();
             }
 
-            // 3. Database Insertion
             string status = (role == "Provider") ? "Pending" : "Active";
 
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -100,7 +95,6 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // Check if the email already exists
                     string checkSql = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
                     SqlCommand checkCmd = new SqlCommand(checkSql, conn);
                     checkCmd.Parameters.AddWithValue("@Email", email);
@@ -113,7 +107,6 @@ namespace Group_9
                         return;
                     }
 
-                    // Insert into Users table and grab the new UserID
                     string insertUserSql = "INSERT INTO Users (Email, Password, UserRole, Status) OUTPUT INSERTED.UserID VALUES (@Email, @Password, @Role, @Status)";
                     SqlCommand cmdUser = new SqlCommand(insertUserSql, conn);
                     cmdUser.Parameters.AddWithValue("@Email", email);
@@ -123,7 +116,6 @@ namespace Group_9
 
                     int newUserId = Convert.ToInt32(cmdUser.ExecuteScalar());
 
-                    // Create the specific profile link based on role
                     if (role == "Provider")
                     {
                         string insertProvSql = "INSERT INTO ServiceProviders (UserID, FirstName, Surname) VALUES (@UID, @FName, @SName)";
@@ -134,17 +126,14 @@ namespace Group_9
                         cmdProv.ExecuteNonQuery();
                     }
 
-                    // 4. Success Redirect! (No success message shown)
                     Response.Redirect("Login.aspx", false);
                 }
                 catch (SqlException)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass database crash securely to Global.asax
                     throw;
                 }
                 catch (Exception)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass system crash securely to Global.asax
                     throw;
                 }
             }
@@ -169,7 +158,6 @@ namespace Group_9
             txtPassword.Text = "";
             txtConfirmPassword.Text = "";
 
-            // Uncheck the POPIA box on clear
             chkPOPIA.Checked = false;
 
             lblMessage.Visible = false;

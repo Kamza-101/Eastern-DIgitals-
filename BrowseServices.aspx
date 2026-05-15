@@ -7,7 +7,7 @@
         border-radius: 12px;
         box-shadow: 0 4px 6px whitesmoke;
         height: 100%;
-        position: relative; /* Required for absolute badges */
+        position: relative; 
     }
     .service-card:hover {
         transform: translateY(-5px);
@@ -25,7 +25,6 @@
         top: 15px;
         right: 15px;
     }
-    /* NEW: Styling for the Premium Badge */
     .featured-badge {
         position: absolute;
         top: 15px;
@@ -33,7 +32,6 @@
         font-size: 0.85rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    /* NEW: Styling for the Premium Card Border */
     .premium-border {
         border: 2px solid #FFD700 !important;
         box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
