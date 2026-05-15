@@ -15,6 +15,33 @@ namespace Group_9
     {
 
         /// <summary>
+        /// lblProviderInitial control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProviderInitial;
+
+        /// <summary>
+        /// lblProviderName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblProviderName;
+
+        /// <summary>
+        /// lblServiceType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblServiceType;
+
+        /// <summary>
         /// lblUpgradeSuccess control.
         /// </summary>
         /// <remarks>

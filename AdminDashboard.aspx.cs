@@ -18,7 +18,6 @@ namespace Group_9
         {
             if (!IsPostBack)
             {
-            
                 if (Session["UserRole"] == null || Session["UserRole"].ToString() != "Admin")
                 {
                     Response.Redirect("Login.aspx");
@@ -28,7 +27,6 @@ namespace Group_9
             }
         }
 
-        // Helper method to reload the whole page after making a change
         private void RefreshAllData()
         {
             LoadMetrics();
@@ -81,7 +79,18 @@ namespace Group_9
             {
                 try
                 {
-                    string sql = "SELECT UserID, Email FROM Users WHERE UserRole = 'Provider' AND Status = 'Pending'";
+                    // JOIN RELATION: Pulls contextual name metrics and classifications safely from the profile schema
+                    string sql = @"
+                        SELECT 
+                            u.UserID, 
+                            u.Email, 
+                            ISNULL(p.FirstName, 'N/A') AS FirstName, 
+                            ISNULL(p.Surname, 'N/A') AS Surname, 
+                            ISNULL(p.ServiceType, 'General Profile Setup') AS ProposedService
+                        FROM Users u
+                        INNER JOIN ServiceProviders p ON u.UserID = p.UserID
+                        WHERE u.UserRole = 'Provider' AND u.Status = 'Pending'";
+
                     SqlDataAdapter da = new SqlDataAdapter(sql, conn);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -89,7 +98,11 @@ namespace Group_9
                     rptPendingProviders.DataSource = dt;
                     rptPendingProviders.DataBind();
                 }
-                catch (Exception ex) {  }
+                catch (Exception ex)
+                {
+                    lblAdminMessage.Text = "Database Loading Crash: " + ex.Message;
+                    lblAdminMessage.Visible = true;
+                }
             }
         }
 
@@ -110,7 +123,7 @@ namespace Group_9
                     rptAllUsers.DataSource = dt;
                     rptAllUsers.DataBind();
                 }
-                catch (Exception ex) {  }
+                catch (Exception ex) { }
             }
         }
 
@@ -137,7 +150,7 @@ namespace Group_9
             string userId = e.CommandArgument.ToString();
             string newStatus = e.CommandName == "Approve" ? "Active" : "Rejected";
 
-            UpdateUserStatus(userId, newStatus);
+            UpdateUserStatus(userId, newStatus, null);
             lblAdminMessage.Text = $"Provider registration successfully {newStatus.ToLower()}!";
             lblAdminMessage.Visible = true;
 
@@ -153,8 +166,22 @@ namespace Group_9
                 string currentStatus = args[1];
 
                 string newStatus = (currentStatus == "Active") ? "Suspended" : "Active";
+                string reason = null;
 
-                UpdateUserStatus(userId, newStatus);
+                if (newStatus == "Suspended")
+                {
+                    TextBox txtReason = (TextBox)e.Item.FindControl("txtSuspendReason");
+                    if (txtReason != null && !string.IsNullOrWhiteSpace(txtReason.Text))
+                    {
+                        reason = txtReason.Text.Trim();
+                    }
+                    else
+                    {
+                        reason = "Violation of platform policies.";
+                    }
+                }
+
+                UpdateUserStatus(userId, newStatus, reason);
                 lblAdminMessage.Text = $"User account is now {newStatus}.";
                 lblAdminMessage.Visible = true;
 
@@ -162,16 +189,21 @@ namespace Group_9
             }
         }
 
-        private void UpdateUserStatus(string userId, string newStatus)
+        private void UpdateUserStatus(string userId, string newStatus, string reason = null)
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 try
                 {
-                    string sql = "UPDATE Users SET Status = @Status WHERE UserID = @UID";
+                    string sql = "UPDATE Users SET Status = @Status, SuspensionReason = @Reason WHERE UserID = @UID";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@Status", newStatus);
                     cmd.Parameters.AddWithValue("@UID", userId);
+
+                    if (reason == null)
+                        cmd.Parameters.AddWithValue("@Reason", DBNull.Value);
+                    else
+                        cmd.Parameters.AddWithValue("@Reason", reason);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();

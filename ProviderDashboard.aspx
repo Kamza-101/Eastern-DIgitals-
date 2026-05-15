@@ -12,7 +12,8 @@
             background-color: var(--ios-bg); 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         }
-
+        
+        /* Metric Card Styling */
         .metric-card {
             background: var(--ios-card);
             border-radius: 20px;
@@ -39,6 +40,7 @@
             color: var(--ios-green);
         }
 
+        /* Booking List Styling */
         .booking-card {
             background: var(--ios-card);
             border-radius: 20px;
@@ -58,18 +60,82 @@
             justify-content: center;
             border: 1px solid #e9ecef;
         }
-
+        
+        /* Premium Banner Styling */
         .premium-banner {
             background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
             color: #000;
             border: none;
+        }
+
+        /* New Provider Profile Styling */
+        .provider-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--ios-card);
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f0f0f0;
+        }
+        .provider-avatar-header {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--ios-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(0, 122, 255, 0.2);
+        }
+        .provider-info-header {
+            text-align: left;
+        }
+        .provider-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1c1c1e;
+            margin-bottom: 4px;
+        }
+        .provider-details {
+            font-size: 0.85rem;
+            color: #8e8e93;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .provider-details span {
+            display: inline-block;
+            margin-right: 10px;
         }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container py-5" style="max-width: 1000px;">
-        <h2 class="fw-bold mb-4">Dashboard</h2>
+        
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <h2 class="fw-bold mb-0">Dashboard</h2>
+
+            <div class="provider-profile-header">
+                <div class="provider-avatar-header">
+                    <asp:Label ID="lblProviderInitial" runat="server"></asp:Label>
+                </div>
+                <div class="provider-info-header">
+                    <div class="provider-name">
+                        <asp:Label ID="lblProviderName" runat="server"></asp:Label>
+                    </div>
+                    <div class="provider-details">
+                        <div class="text-dark fw-bold mb-1">
+                            🛠️ <asp:Label ID="lblServiceType" runat="server"></asp:Label>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
 
         <asp:Label ID="lblUpgradeSuccess" runat="server" CssClass="alert alert-success d-block fw-bold mb-4 rounded-4 shadow-sm" Visible="false"></asp:Label>
 

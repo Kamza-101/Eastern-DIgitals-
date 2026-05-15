@@ -20,7 +20,6 @@
         
         .activity-card { background: var(--ios-card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
         
-       
         .btn-ios { background-color: var(--ios-blue); color: white; padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: 600; display: inline-block; transition: opacity 0.2s; border: none; cursor: pointer; }
         .btn-ios:hover { opacity: 0.8; color: white; }
         
@@ -95,8 +94,10 @@
                 <ItemTemplate>
                     <div class="user-list-item">
                         <div>
-                            <strong style="font-size: 1.1rem;"><%# Eval("Email") %></strong><br />
-                            <span class="badge bg-warning text-dark mt-1">Pending Approval</span>
+                            <strong style="font-size: 1.1rem;"><%# Eval("FirstName") %> <%# Eval("Surname") %></strong><br />
+                            <span class="text-muted mb-1 d-block" style="font-size: 0.85rem;"><%# Eval("Email") %></span>
+                            <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Proposed Service: <%# Eval("ProposedService") %></span><br />
+                            <span class="badge bg-warning text-dark mt-2">Pending Approval</span>
                         </div>
                         <div class="d-flex gap-2">
                             <asp:Button ID="btnApprove" runat="server" Text="Approve" CssClass="btn btn-success fw-bold rounded-pill px-3 py-1" CommandName="Approve" CommandArgument='<%# Eval("UserID") %>' />
@@ -133,7 +134,14 @@
                                 </span>
                             </div>
                         </div>
-                        <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <asp:TextBox ID="txtSuspendReason" runat="server" 
+                                CssClass="form-control form-control-sm" 
+                                Placeholder="Reason for suspension..." 
+                                Visible='<%# Eval("Status").ToString() == "Active" %>' 
+                                style="width: 200px; font-size: 0.8rem; border-radius: 8px;">
+                            </asp:TextBox>
+
                             <asp:Button ID="btnToggle" runat="server" 
                                 Text='<%# Eval("Status").ToString() == "Active" ? "Suspend" : "Activate" %>' 
                                 CssClass='<%# "btn fw-bold rounded-pill px-4 py-1 " + (Eval("Status").ToString() == "Active" ? "btn-outline-danger" : "btn-outline-success") %>' 
