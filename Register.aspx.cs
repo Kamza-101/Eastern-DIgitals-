@@ -134,8 +134,8 @@ namespace Group_9
                         cmdProv.ExecuteNonQuery();
                     }
 
-                    // 4. Success Redirect! (No success message shown)
-                    Response.Redirect("Login.aspx", false);
+                    // 4. Success Redirect! (Added query string for Login page notification)
+                    Response.Redirect("Login.aspx?registered=true", false);
                 }
                 catch (SqlException)
                 {
