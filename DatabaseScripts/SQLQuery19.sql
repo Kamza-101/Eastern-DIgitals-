@@ -1,0 +1,2 @@
+﻿ALTER TABLE Bookings
+ADD RejectionReason NVARCHAR(500) NULL;

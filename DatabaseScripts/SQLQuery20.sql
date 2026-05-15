@@ -1,0 +1,2 @@
+﻿ALTER TABLE Users
+ADD SuspensionReason NVARCHAR(500) NULL;
