@@ -215,6 +215,7 @@ namespace Group_9
         {
             string bookingId = e.CommandArgument.ToString();
             string newStatus = "";
+            string reason = null; 
 
             if (e.CommandName == "Approve")
             {
@@ -223,6 +224,16 @@ namespace Group_9
             else if (e.CommandName == "Reject")
             {
                 newStatus = "Rejected";
+
+                TextBox txtReason = (TextBox)e.Item.FindControl("txtRejectReason");
+                if (txtReason != null && !string.IsNullOrWhiteSpace(txtReason.Text))
+                {
+                    reason = txtReason.Text.Trim();
+                }
+                else
+                {
+                    reason = "Provider is currently unavailable to fulfill this request."; 
+                }
             }
             else if (e.CommandName == "Complete")
             {
@@ -235,10 +246,19 @@ namespace Group_9
                 {
                     try
                     {
-                        string sql = "UPDATE Bookings SET Status = @Status WHERE BookingID = @BID";
+                        string sql = "UPDATE Bookings SET Status = @Status, RejectionReason = @Reason WHERE BookingID = @BID";
                         SqlCommand cmd = new SqlCommand(sql, conn);
                         cmd.Parameters.AddWithValue("@Status", newStatus);
                         cmd.Parameters.AddWithValue("@BID", bookingId);
+
+                        if (reason == null)
+                        {
+                            cmd.Parameters.AddWithValue("@Reason", DBNull.Value);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@Reason", reason);
+                        }
 
                         conn.Open();
                         cmd.ExecuteNonQuery();

@@ -55,7 +55,7 @@
             <asp:TextBox ID="txtNotes" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" placeholder="Add any specific instructions for the provider..."></asp:TextBox>
 
             <div class="mt-4">
-                <asp:Button ID="btnConfirmBooking" runat="server" Text="Confirm Booking & Pay" CssClass="btn-confirm" OnClick="btnConfirmBooking_Click" />
+                <asp:Button ID="btnConfirmBooking" runat="server" Text="Confirm Booking " CssClass="btn-confirm" OnClick="btnConfirmBooking_Click" />
             </div>
             
             <div class="text-center mt-3">

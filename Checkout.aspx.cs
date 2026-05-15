@@ -63,7 +63,7 @@ namespace Group_9
 
                     cmdDelete.ExecuteNonQuery();
 
-                    Response.Redirect("Bookings.aspx");
+                    Response.Redirect("BookingSuccess.aspx?ref=" + orderRef, false);
                 }
                 catch (SqlException ex)
                 {
@@ -79,4 +79,3 @@ namespace Group_9
         }
     }
 }
-

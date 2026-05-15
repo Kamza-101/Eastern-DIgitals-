@@ -42,7 +42,7 @@ namespace Group_9
             {
                 try
                 {
-                    string sql = "SELECT UserID, Password, Status FROM Users WHERE Email = @Email AND UserRole = @Role";
+                    string sql = "SELECT UserID, Password, Status, SuspensionReason FROM Users WHERE Email = @Email AND UserRole = @Role";
                     SqlCommand cmd = new SqlCommand(sql, conn);
 
                     cmd.Parameters.AddWithValue("@Email", email);
@@ -65,7 +65,7 @@ namespace Group_9
                             {
                                 lblLoginMessage.Text = "Incorrect password. Please try again.";
                                 lblLoginMessage.CssClass = "text-danger fw-bold";
-                                return; 
+                                return;
                             }
 
                             if (status == "Pending")
@@ -75,7 +75,13 @@ namespace Group_9
                             }
                             else if (status == "Suspended")
                             {
-                                lblLoginMessage.Text = "Your account has been suspended by an Administrator.";
+                                string reason = reader["SuspensionReason"].ToString();
+                                if (string.IsNullOrWhiteSpace(reason))
+                                {
+                                    reason = "Violation of platform policies."; 
+                                }
+
+                                lblLoginMessage.Text = $"Your account has been suspended by an Administrator. Reason: {reason}";
                                 lblLoginMessage.CssClass = "text-danger fw-bold";
                             }
                             else if (status == "Active")
@@ -83,7 +89,7 @@ namespace Group_9
                                 Session["UserID"] = dbUserId;
                                 Session["UserRole"] = role;
 
-                                isLoginSuccessful = true; 
+                                isLoginSuccessful = true;
 
                                 if (role == "Admin") redirectPage = "AdminDashboard.aspx";
                                 else if (role == "Provider") redirectPage = "ProviderDashboard.aspx";
@@ -95,7 +101,7 @@ namespace Group_9
                             lblLoginMessage.Text = "No account found with this email address for the selected role.";
                             lblLoginMessage.CssClass = "text-danger fw-bold";
                         }
-                    } 
+                    }
 
                     if (isLoginSuccessful)
                     {
@@ -104,7 +110,7 @@ namespace Group_9
                         {
                             logCmd.Parameters.AddWithValue("@User", email);
                             logCmd.Parameters.AddWithValue("@Action", "User successfully logged in as " + role);
-                            logCmd.ExecuteNonQuery(); 
+                            logCmd.ExecuteNonQuery();
                         }
 
                         Response.Redirect(redirectPage, false);
@@ -112,11 +118,11 @@ namespace Group_9
                 }
                 catch (SqlException)
                 {
-                    throw; 
+                    throw;
                 }
                 catch (Exception)
                 {
-                    throw; 
+                    throw;
                 }
             }
         }
@@ -182,7 +188,7 @@ namespace Group_9
         private void SendPasswordEmail(string toEmail, string password)
         {
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("dstixx809@gmail.com", "EasternDigital Support"); 
+            mail.From = new MailAddress("dstixx809@gmail.com", "EasternDigital Support");
             mail.To.Add(toEmail);
             mail.Subject = "EasternDigital - Password Recovery";
 

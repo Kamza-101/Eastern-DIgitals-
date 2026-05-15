@@ -10,8 +10,7 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 6px whitesmoke;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column; 
             transition: transform 0.2s;
         }
         .booking-card:hover {
@@ -36,14 +35,10 @@
             font-weight: bold;
             text-align: center;
         }
-        .status-pending {
-            background-color: #ffe8cc;
-            color: #fd7e14; 
-        }
-        .status-approved {
-            background-color: #d1e7dd;
-            color: #198754;
-        }
+        .status-pending { background-color: #ffe8cc; color: #fd7e14; }
+        .status-approved { background-color: #e8f8ec; color: #34c759; }
+        .status-completed { background-color: #e6f2ff; color: #007aff; }
+        .status-rejected { background-color: #ffebe9; color: #ff3b30; }
     </style>
 </asp:Content>
 
@@ -58,28 +53,37 @@
                 
                 <asp:Repeater ID="rptBookings" runat="server">
                     <ItemTemplate>
-                        <div class="booking-card flex-column flex-md-row gap-3">
+                        <div class="booking-card">
                             
-                            <div class="d-flex align-items-center gap-4 w-100">
-                                <div class="provider-avatar shadow-sm border">
-                                    <%# Eval("Icon") %>
+                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between w-100 gap-3">
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="provider-avatar shadow-sm border">
+                                        <%# Eval("Icon") %>
+                                    </div>
+                                    
+                                    <div>
+                                        <h5 class="fw-bold mb-1 text-dark"><%# Eval("FirstName") %> <%# Eval("Surname") %></h5>
+                                        <p class="text-muted mb-1 fw-semibold"><%# Eval("ServiceName") %></p>
+                                        <p class="text-muted mb-0 small">
+                                            📅 <%# Convert.ToDateTime(Eval("BookingDate")).ToString("MMM dd, yyyy - hh:mm tt") %> <br />
+                                            💰 R <%# Convert.ToDecimal(Eval("TotalCost")).ToString("0.00") %> &nbsp;|&nbsp; Ref: <%# Eval("OrderReference") %>
+                                        </p>
+                                    </div>
                                 </div>
                                 
-                                <div>
-                                    <h5 class="fw-bold mb-1 text-dark"><%# Eval("FirstName") %> <%# Eval("Surname") %></h5>
-                                    <p class="text-muted mb-1 fw-semibold"><%# Eval("ServiceName") %></p>
-                                    <p class="text-muted mb-0 small">
-                                        📅 <%# Convert.ToDateTime(Eval("BookingDate")).ToString("MMM dd, yyyy - hh:mm tt") %> <br />
-                                        💰 R <%# Convert.ToDecimal(Eval("TotalCost")).ToString("0.00") %> &nbsp;|&nbsp; Ref: <%# Eval("OrderReference") %>
-                                    </p>
+                                <div class="text-md-end mt-3 mt-md-0" style="min-width: 150px;">
+                                    <div class='status-badge <%# GetStatusCssClass(Eval("Status").ToString()) %>'>
+                                        <%# Eval("Status") %>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="text-md-end mt-3 mt-md-0" style="min-width: 150px;">
-                                <div class='status-badge <%# Eval("Status").ToString() == "Pending Confirmation" ? "status-pending" : "status-approved" %>'>
-                                    <%# Eval("Status") %>
-                                </div>
-                            </div>
+
+                            <asp:Panel ID="pnlRejection" runat="server" Visible='<%# Eval("Status").ToString() == "Rejected" %>' 
+                                CssClass="alert alert-danger mt-3 mb-0 py-2 px-3 small border-0" 
+                                style="background-color: #fff0f0; border-radius: 8px;">
+                                <strong class="text-danger">Reason for rejection:</strong> 
+                                <span class="text-dark"><%# Eval("RejectionReason") %></span>
+                            </asp:Panel>
 
                         </div>
                     </ItemTemplate>

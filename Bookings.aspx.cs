@@ -44,6 +44,7 @@ namespace Group_9
                             b.BookingDate, 
                             b.Status, 
                             b.TotalCost,
+                            ISNULL(b.RejectionReason, 'No reason provided by the provider.') AS RejectionReason,
                             s.ServiceName, 
                             s.Icon,
                             p.FirstName, 
@@ -82,6 +83,22 @@ namespace Group_9
                 }
             }
         }
+
+        protected string GetStatusCssClass(string status)
+        {
+            switch (status)
+            {
+                case "Pending Confirmation":
+                    return "status-pending";
+                case "Approved":
+                    return "status-approved";
+                case "Completed":
+                    return "status-completed";
+                case "Rejected":
+                    return "status-rejected";
+                default:
+                    return "status-pending"; 
+            }
+        }
     }
 }
-

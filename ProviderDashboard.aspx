@@ -148,24 +148,33 @@
                             </div>
                         </div>
                         
-                        <div class="mt-3 mt-md-0 d-flex gap-2">
-                            <asp:Button ID="btnApprove" runat="server" Text="Approve" 
-                                CssClass="btn btn-success fw-bold rounded-pill px-4 shadow-sm" 
-                                CommandName="Approve" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
-                                CausesValidation="false" />
-                                
-                            <asp:Button ID="btnReject" runat="server" Text="Reject" 
-                                CssClass="btn btn-outline-danger fw-bold rounded-pill px-4" 
-                                CommandName="Reject" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
-                                CausesValidation="false" />
+                        <div class="mt-3 mt-md-0 d-flex flex-column align-items-md-end gap-2">
+                            <div class="d-flex gap-2">
+                                <asp:Button ID="btnApprove" runat="server" Text="Approve" 
+                                    CssClass="btn btn-success fw-bold rounded-pill px-4 shadow-sm" 
+                                    CommandName="Approve" CommandArgument='<%# Eval("BookingID") %>' 
+                                    Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
+                                    CausesValidation="false" />
+                                    
+                                <asp:Button ID="btnReject" runat="server" Text="Reject" 
+                                    CssClass="btn btn-outline-danger fw-bold rounded-pill px-4" 
+                                    CommandName="Reject" CommandArgument='<%# Eval("BookingID") %>' 
+                                    Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
+                                    CausesValidation="false" />
 
-                            <asp:Button ID="btnComplete" runat="server" Text="Mark as Completed ✓" 
-                                CssClass="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" 
-                                CommandName="Complete" CommandArgument='<%# Eval("BookingID") %>' 
-                                Visible='<%# Convert.ToString(Eval("Status")) == "Approved" %>' 
-                                CausesValidation="false" />
+                                <asp:Button ID="btnComplete" runat="server" Text="Mark as Completed ✓" 
+                                    CssClass="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" 
+                                    CommandName="Complete" CommandArgument='<%# Eval("BookingID") %>' 
+                                    Visible='<%# Convert.ToString(Eval("Status")) == "Approved" %>' 
+                                    CausesValidation="false" />
+                            </div>
+                            
+                            <asp:TextBox ID="txtRejectReason" runat="server" 
+                                CssClass="form-control form-control-sm mt-1" 
+                                Placeholder="Reason if rejecting..." 
+                                Visible='<%# Convert.ToString(Eval("Status")) == "Pending Confirmation" %>' 
+                                style="width: 250px; font-size: 0.85rem; border-radius: 8px;">
+                            </asp:TextBox>
                         </div>
                         
                     </div>
