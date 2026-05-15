@@ -17,7 +17,6 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Security check: Must be logged in to view bookings
             if (Session["UserID"] == null)
             {
                 Response.Redirect("Login.aspx", false);
@@ -38,7 +37,6 @@ namespace Group_9
             {
                 try
                 {
-                    // 1. The massive INNER JOIN to get everything your wireframe needs
                     string query = @"
                         SELECT 
                             b.BookingID, 
@@ -65,11 +63,9 @@ namespace Group_9
                     conn.Open();
                     da.Fill(dt);
 
-                    // 2. Bind it to your front-end Repeater
                     rptBookings.DataSource = dt;
                     rptBookings.DataBind();
 
-                    // Optional: If there are no bookings, show a message
                     if (dt.Rows.Count == 0)
                     {
                         lblMessage.Text = "You have not made any bookings yet.";
@@ -78,12 +74,10 @@ namespace Group_9
                 }
                 catch (SqlException)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass database crash securely to Global.asax
                     throw;
                 }
                 catch (Exception)
                 {
-                    // LECTURE 8 COMPLIANCE: Pass system crash securely to Global.asax
                     throw;
                 }
             }

@@ -18,7 +18,6 @@ namespace Group_9
         {
             if (!IsPostBack)
             {
-                // Ensure only admins can access
                 if (Session["UserRole"]?.ToString() != "Admin") Response.Redirect("Login.aspx");
                 BindGrid();
             }
@@ -28,7 +27,6 @@ namespace Group_9
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // Aliasing Email as Username to match your Frontend BoundField
                 string query = "SELECT UserID, Email AS Username, UserRole, Status FROM Users";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
@@ -38,18 +36,15 @@ namespace Group_9
             }
         }
 
-        // IMPORTANT: Pre-select the dropdowns based on database values
         protected void gvUsers_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 DataRowView drv = (DataRowView)e.Row.DataItem;
 
-                // Find controls
                 DropDownList ddlRole = (DropDownList)e.Row.FindControl("ddlRole");
                 DropDownList ddlStatus = (DropDownList)e.Row.FindControl("ddlStatus");
 
-                // Set values
                 ddlRole.SelectedValue = drv["UserRole"].ToString();
                 ddlStatus.SelectedValue = drv["Status"].ToString();
             }
@@ -62,14 +57,11 @@ namespace Group_9
                 conn.Open();
                 foreach (GridViewRow row in gvUsers.Rows)
                 {
-                    // Get the ID from DataKeyNames
                     int userId = Convert.ToInt32(gvUsers.DataKeys[row.RowIndex].Value);
 
-                    // Find the dropdowns in this specific row
                     DropDownList ddlRole = (DropDownList)row.FindControl("ddlRole");
                     DropDownList ddlStatus = (DropDownList)row.FindControl("ddlStatus");
 
-                    // Update the DB
                     string sql = "UPDATE Users SET UserRole = @Role, Status = @Status WHERE UserID = @UID";
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@Role", ddlRole.SelectedValue);
@@ -79,7 +71,7 @@ namespace Group_9
                     cmd.ExecuteNonQuery();
                 }
             }
-            // Refresh the list after save
+
             BindGrid();
         }
     }

@@ -27,7 +27,6 @@ namespace Group_9
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // SELECT current bio and skills
                 string sql = "SELECT Bio, Skills FROM ServiceProviders WHERE UserID = @UID";
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
@@ -47,7 +46,6 @@ namespace Group_9
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // UPDATE query to save changes
                 string sql = "UPDATE ServiceProviders SET Bio = @Bio, Skills = @Skills WHERE UserID = @UID";
                 SqlCommand cmd = new SqlCommand(sql, conn);
 
@@ -56,7 +54,7 @@ namespace Group_9
                 cmd.Parameters.AddWithValue("@UID", Session["UserID"]);
 
                 conn.Open();
-                cmd.ExecuteNonQuery(); // Execute non-query for updates
+                cmd.ExecuteNonQuery(); 
 
                 lblStatus.Text = "Profile updated successfully!";
                 lblStatus.CssClass = "mt-3 d-block text-center fw-bold text-success";

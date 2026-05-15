@@ -9,31 +9,26 @@ namespace Group_9
 
     public partial class ServiceDetails : System.Web.UI.Page
     {
-        // Define the connection string
         string connStr = ConfigurationManager.ConnectionStrings["EasternDigitalDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // 1. SECURITY CHECK: Ensure the user is logged in
+ 
             if (Session["UserID"] == null)
             {
                 Response.Redirect("Login.aspx");
             }
 
-            // 2. LOAD DATA: Only fetch from the database when the page first loads
             if (!IsPostBack)
             {
                 LoadServiceAndProviderDetails();
             }
         }
 
-        // --- METHOD 1: Fetch and display the details ---
         private void LoadServiceAndProviderDetails()
         {
-            // Get the ServiceID from the URL
             string serviceId = Request.QueryString["ServiceID"];
 
-            // If there is no ID in the URL, send them back to the browse page
             if (string.IsNullOrEmpty(serviceId))
             {
                 Response.Redirect("BrowseServices.aspx");
@@ -44,7 +39,6 @@ namespace Group_9
             {
                 try
                 {
-                    // INNER JOIN query to get both Service AND Provider data
                     string query = @"
                         SELECT 
                             s.ServiceName, s.Description, s.Price, s.Icon,
@@ -58,12 +52,10 @@ namespace Group_9
 
                     conn.Open();
 
-                    // ExecuteReader is used because we are reading specific columns from one row
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            // Assign data to front-end labels
                             lblServiceName.Text = reader["ServiceName"].ToString();
                             lblServiceDesc.Text = reader["Description"].ToString();
                             lblPrice.Text = "R " + Convert.ToDecimal(reader["Price"]).ToString("0.00");
@@ -75,7 +67,6 @@ namespace Group_9
                         }
                         else
                         {
-                            // If the ID in the URL is fake or deleted
                             Response.Redirect("BrowseServices.aspx");
                         }
                     }
@@ -91,10 +82,8 @@ namespace Group_9
             }
         }
 
-        // --- METHOD 2: Add the item to the cart ---
         protected void btnAddToCart_Click(object sender, EventArgs e)
         {
-            // Get IDs
             int userId = Convert.ToInt32(Session["UserID"]);
 
             int serviceId;
@@ -108,7 +97,6 @@ namespace Group_9
             {
                 try
                 {
-                    // 1. Check for duplicates in the cart
                     string checkSql = "SELECT COUNT(*) FROM Cart WHERE UserID = @UID AND ServiceID = @SID";
                     SqlCommand cmdCheck = new SqlCommand(checkSql, conn);
                     cmdCheck.Parameters.AddWithValue("@UID", userId);
@@ -123,7 +111,6 @@ namespace Group_9
                     }
                     else
                     {
-                        // 2. Insert into the Cart table
                         string insertSql = "INSERT INTO Cart (UserID, ServiceID) VALUES (@UID, @SID)";
                         SqlCommand cmdInsert = new SqlCommand(insertSql, conn);
                         cmdInsert.Parameters.AddWithValue("@UID", userId);
@@ -131,7 +118,6 @@ namespace Group_9
 
                         cmdInsert.ExecuteNonQuery();
 
-                        // 3. Success! Redirect to the Cart page
                         Response.Redirect("ViewCart.aspx");
                     }
                 }

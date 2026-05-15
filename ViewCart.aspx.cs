@@ -20,7 +20,6 @@ namespace Group_9
 
         private void BindCart()
         {
-            // Security Check: Only show items for the logged-in User
             if (Session["UserID"] == null)
             {
                 Response.Redirect("Login.aspx");
@@ -48,10 +47,8 @@ namespace Group_9
                     rptCart.DataSource = dt;
                     rptCart.DataBind();
 
-                    // If the cart is empty, show the empty panel
                     pnlEmpty.Visible = (dt.Rows.Count == 0);
 
-                    // Update the total price
                     CalculateTotal(dt);
                 }
                 catch (SqlException ex)
@@ -75,7 +72,7 @@ namespace Group_9
             lblTotal.Text = "R " + total.ToString("0.00");
         }
 
-        // Handles the click of the "Remove" button
+
         protected void rptCart_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Remove")
@@ -99,14 +96,14 @@ namespace Group_9
                     }
                 }
 
-                // Refresh the list so the removed item disappears from the screen
+
                 BindCart();
             }
         }
 
         protected void btnCheckout_Click(object sender, EventArgs e)
         {
-            // You will create a BookingConfirmation.aspx page next
+
             Response.Redirect("Checkout.aspx");
         }
     }

@@ -15,7 +15,6 @@ namespace Group_9
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Security check: Boot them out if they aren't logged in as a Provider
             if (Session["UserID"] == null || Session["UserRole"] == null || Session["UserRole"].ToString() != "Provider")
             {
                 Response.Redirect("Login.aspx", false);
@@ -25,7 +24,6 @@ namespace Group_9
 
         protected void btnPayUpgrade_Click(object sender, EventArgs e)
         {
-            // Simple mock validation
             if (string.IsNullOrWhiteSpace(txtCardName.Text) || string.IsNullOrWhiteSpace(txtCardNumber.Text))
             {
                 lblMessage.Text = "Please fill in the mock card details to process the upgrade.";
@@ -42,7 +40,6 @@ namespace Group_9
                 {
                     conn.Open();
 
-                    // 1. Update their status to Premium
                     string updateSql = "UPDATE ServiceProviders SET IsPremium = 1 WHERE UserID = @UID";
                     using (SqlCommand cmdUpdate = new SqlCommand(updateSql, conn))
                     {
@@ -50,7 +47,6 @@ namespace Group_9
                         cmdUpdate.ExecuteNonQuery();
                     }
 
-                    // 2. Log the financial transaction for the Admin to see later
                     string logSql = "INSERT INTO AuditLogs (UserName, ActionDescription, LogTime) VALUES (@User, @Action, GETDATE())";
                     using (SqlCommand logCmd = new SqlCommand(logSql, conn))
                     {
@@ -59,16 +55,15 @@ namespace Group_9
                         logCmd.ExecuteNonQuery();
                     }
 
-                    // 3. Kick them back to the dashboard to see their shiny new badge
                     Response.Redirect("ProviderDashboard.aspx?upgrade=success", false);
                 }
                 catch (SqlException)
                 {
-                    throw; // Pass to Global.asax
+                    throw; 
                 }
                 catch (Exception)
                 {
-                    throw; // Pass to Global.asax
+                    throw; 
                 }
             }
         }

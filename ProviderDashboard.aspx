@@ -12,8 +12,7 @@
             background-color: var(--ios-bg); 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         }
-        
-        /* Metric Card Styling */
+
         .metric-card {
             background: var(--ios-card);
             border-radius: 20px;
@@ -40,7 +39,6 @@
             color: var(--ios-green);
         }
 
-        /* Booking List Styling */
         .booking-card {
             background: var(--ios-card);
             border-radius: 20px;
@@ -60,8 +58,7 @@
             justify-content: center;
             border: 1px solid #e9ecef;
         }
-        
-        /* Premium Banner Styling */
+
         .premium-banner {
             background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
             color: #000;

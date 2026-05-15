@@ -8,7 +8,6 @@
         
         .ios-card { background: var(--ios-card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
-        /* GridView Styling */
         .ios-grid { width: 100%; border-collapse: separate; border-spacing: 0; }
         .ios-grid th { padding: 15px; color: #8e8e93; font-weight: 500; text-align: left; }
         .ios-grid td { padding: 15px; border-bottom: 1px solid #f2f2f7; }
